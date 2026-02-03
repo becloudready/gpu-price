@@ -1,7 +1,7 @@
 
 # GPU Price
 
-**CloudDealHunt** is a tool designed to help developers find the best prices for various cloud resources such as GPUs, CPUs, AI tokens, and other services across multiple cloud providers. Whether you're working with AI workloads, distributed systems, or general compute needs, CloudPriceFinder ensures you get the best price for the resources you need.
+**GPU Price** is a tool designed to help developers find the best prices for various cloud resources such as GPUs, CPUs, AI tokens, and other services across multiple cloud providers. Whether you're working with AI workloads, distributed systems, or general compute needs, CloudPriceFinder ensures you get the best price for the resources you need.
 
 ## Features
 
