@@ -43,11 +43,11 @@ jobs:
           ENDPOINT="https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com"
 
           # Upload "latest" (overwrite each run)
-          aws s3 sync out "s3://${R2_BUCKET}/latest" \
+          aws s3 sync data "s3://${R2_BUCKET}/latest" \
             --endpoint-url "${ENDPOINT}" \
             --delete
 
           # Optional: also upload a dated snapshot directory
           DATE="$(date -u +%Y-%m-%d)"
-          aws s3 sync out "s3://${R2_BUCKET}/history/${DATE}" \
+          aws s3 sync data "s3://${R2_BUCKET}/history/${DATE}" \
             --endpoint-url "${ENDPOINT}"
