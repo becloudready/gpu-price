@@ -30,6 +30,8 @@ jobs:
         run: |
           mkdir -p data
           python3 run_all_scrapers.py
+          python3 merge_all_prices.py --in-dir data --out-json data/all.json
+
 
       - name: Upload to Cloudflare R2 (S3 API)
         env:
