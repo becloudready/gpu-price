@@ -1,42 +1,57 @@
-name: Generate GPU Prices
+name: Nightly scrape + publish to R2
 
 on:
-  
-  workflow_dispatch:  # Allows manual triggering from the GitHub UI
+  schedule:
+    # Runs daily at 03:17 UTC (pick a non-00 minute to reduce contention)
+    - cron: "17 3 * * *"
+  workflow_dispatch: {}
 
 jobs:
-  generate:
+  scrape-and-upload:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
 
     steps:
-    # Step 1: Checkout the repository
-    - name: Checkout Repository
-      uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    # Step 2: Set up Python
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.x'
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
 
-    # Step 3: Install required Python dependencies (if any)
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        # Install gpuhunt and any other dependencies if necessary
-        pip install gpuhunt
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
-    # Step 4: Run the Python script to generate the GPU prices
-    - name: Run GPU Price Script
-      run: |
-        python generate_gpu_prices.py
+      - name: Run scrapers
+        run: |
+          mkdir -p data
+          python3 run_all_scrapers.py
+      - name: Install AWS CLI
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y awscli
 
-    # Step 5: Commit and push the output file to the gpu-price branch
-    - name: Commit and Push Changes
-      run: |
-        git config --global user.name "github-actions[bot]"
-        git config --global user.email "github-actions[bot]@users.noreply.github.com"
-        git add gpu_prices.json
-        current_date=$(date +"%Y-%m-%d")  # Get the current date in the format YYYY-MM-DD
-        git commit -m "Update GPU prices on $current_date"
-        git push origin main
+      - name: Upload to Cloudflare R2 (S3 API)
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: auto
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_BUCKET: ${{ secrets.R2_BUCKET }}
+        run: |
+          set -euo pipefail
+          ENDPOINT="https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com"
+
+          # Upload "latest" (overwrite each run)
+          aws s3 sync out "s3://${R2_BUCKET}/latest" \
+            --endpoint-url "${ENDPOINT}" \
+            --delete
+
+          # Optional: also upload a dated snapshot directory
+          DATE="$(date -u +%Y-%m-%d)"
+          aws s3 sync out "s3://${R2_BUCKET}/history/${DATE}" \
+            --endpoint-url "${ENDPOINT}"
