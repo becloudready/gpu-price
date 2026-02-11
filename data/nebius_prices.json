@@ -1,0 +1,62 @@
+[
+  {
+    "provider": "nebius",
+    "product": "NVIDIA GB200 NVL72*",
+    "gpu_count": null,
+    "vram_gb": 186.0,
+    "vcpus": 112,
+    "system_ram_gb": 800,
+    "local_storage_tb": null,
+    "price_per_hour_usd": null
+  },
+  {
+    "provider": "nebius",
+    "product": "NVIDIA HGX B200",
+    "gpu_count": null,
+    "vram_gb": 180.0,
+    "vcpus": 16,
+    "system_ram_gb": 200,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 5.5
+  },
+  {
+    "provider": "nebius",
+    "product": "NVIDIA HGX H200",
+    "gpu_count": null,
+    "vram_gb": 141.0,
+    "vcpus": 16,
+    "system_ram_gb": 200,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 3.5
+  },
+  {
+    "provider": "nebius",
+    "product": "NVIDIA HGX H100",
+    "gpu_count": null,
+    "vram_gb": 80.0,
+    "vcpus": 16,
+    "system_ram_gb": 200,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 2.95
+  },
+  {
+    "provider": "nebius",
+    "product": "NVIDIA L40S GPU with AMD",
+    "gpu_count": null,
+    "vram_gb": 48.0,
+    "vcpus": 16,
+    "system_ram_gb": 96,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 1.82
+  },
+  {
+    "provider": "nebius",
+    "product": "NVIDIA L40S GPU with Intel",
+    "gpu_count": null,
+    "vram_gb": 48.0,
+    "vcpus": 8,
+    "system_ram_gb": 32,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 1.55
+  }
+]

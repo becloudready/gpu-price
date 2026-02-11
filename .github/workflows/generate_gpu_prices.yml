@@ -1,0 +1,55 @@
+name: Nightly scrape + publish to R2
+
+on:
+  schedule:
+    # Runs daily at 03:17 UTC (pick a non-00 minute to reduce contention)
+    - cron: "17 3 * * *"
+  workflow_dispatch: {}
+
+jobs:
+  scrape-and-upload:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run scrapers
+        run: |
+          mkdir -p data
+          python3 run_all_scrapers.py
+          python3 merge_all_prices.py --in-dir data --out-json data/all.json
+
+
+      - name: Upload to Cloudflare R2 (S3 API)
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: auto
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_BUCKET: ${{ secrets.R2_BUCKET }}
+        run: |
+          set -euo pipefail
+          ENDPOINT="https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com"
+
+          # Upload "latest" (overwrite each run)
+          aws s3 sync data "s3://${R2_BUCKET}/latest" \
+            --endpoint-url "${ENDPOINT}" \
+            --delete
+
+          # Optional: also upload a dated snapshot directory
+          DATE="$(date -u +%Y-%m-%d)"
+          aws s3 sync data "s3://${R2_BUCKET}/history/${DATE}" \
+            --endpoint-url "${ENDPOINT}"

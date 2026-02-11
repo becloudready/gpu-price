@@ -1,0 +1,25 @@
+provider,product,gpu_count,vram_gb,vcpus,system_ram_gb,local_storage_tb,price_per_hour_usd
+crusoe,NVIDIA GB200,,186,,,,
+crusoe,NVIDIA B200,,180,,,,
+crusoe,NVIDIA H200,,141,,,,4.29
+crusoe,NVIDIA H100,,80,,,,3.9
+crusoe,NVIDIA A100,,80,,,,1.95
+crusoe,NVIDIA A100,,80,,,,1.65
+crusoe,NVIDIA A100,,40,,,,1.45
+crusoe,NVIDIA L40S,,48,,,,1.0
+crusoe,NVIDIA A40,,48,,,,0.9
+crusoe,AMD MI355X,,288,,,,
+crusoe,AMD MI300X,,192,,,,3.45
+crusoe,General-purpose,,,,,,0.04
+crusoe,Storage-optimized,,,,,,0.09
+crusoe,Persistent disks,,,,,,0.08
+crusoe,Shared disks,,,,,,0.07
+crusoe,Container registry usage,,,,,,0.1
+crusoe,Cluster pricing,,,,,,0.1
+crusoe,DeepSeek,,,,,,1.35
+crusoe,DeepSeek,,,,,,0.5
+crusoe,Gemma 3,,,,,,0.08
+crusoe,GPT-OSS,,,,,,0.15
+crusoe,Kimi-K2,,,,,,0.6
+crusoe,Llama,,,,,,0.25
+crusoe,Qwen3,,,,,,0.22

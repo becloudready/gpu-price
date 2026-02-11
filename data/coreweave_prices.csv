@@ -1,0 +1,9 @@
+provider,product,gpu_count,vram_gb,vcpus,system_ram_gb,local_storage_tb,price_per_hour_usd,raw_price
+coreweave,NVIDIA GB200 NVL72,,186,144,960,30.72,42.0,$42.00
+coreweave,NVIDIA B200,8,180,128,2048,61.44,68.8,$68.80
+coreweave,NVIDIA RTX PRO 6000 Blackwell Server Edition,8,96,128,1024,7.68,20.0,$20.00
+coreweave,NVIDIA HGX H200,8,141,128,2048,61.44,50.44,$50.44
+coreweave,NVIDIA GH200,1,96,72,480,7.68,6.5,$6.50
+coreweave,NVIDIA L40,8,48,128,1024,7.68,10.0,$10.00
+coreweave,NVIDIA L40S,8,48,128,1024,7.68,18.0,$18.00
+coreweave,NVIDIA A100,8,80,128,2048,7.68,21.6,$21.60

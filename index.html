@@ -1,0 +1,634 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GPU Price Monitor</title>
+  <meta name="description" content="Daily GPU price snapshots across neo cloud providers." />
+
+  <style>
+    :root{
+      --bg: #0b1020;
+      --panel: rgba(255,255,255,0.06);
+      --panel2: rgba(255,255,255,0.09);
+      --border: rgba(255,255,255,0.10);
+      --text: rgba(255,255,255,0.92);
+      --muted: rgba(255,255,255,0.65);
+      --muted2: rgba(255,255,255,0.45);
+      --accent: #7c5cff;
+      --accent2:#19c37d;
+      --warn:#ffcc66;
+      --shadow: 0 10px 30px rgba(0,0,0,0.35);
+      --radius: 16px;
+      --radius2: 12px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+
+    *{ box-sizing: border-box; }
+    body{
+      margin:0;
+      font-family: var(--sans);
+      color: var(--text);
+      background:
+        radial-gradient(1200px 600px at 20% -10%, rgba(124,92,255,0.35), transparent 60%),
+        radial-gradient(900px 500px at 90% 10%, rgba(25,195,125,0.18), transparent 55%),
+        radial-gradient(800px 600px at 30% 110%, rgba(255,204,102,0.12), transparent 55%),
+        var(--bg);
+      min-height:100vh;
+    }
+
+    a{ color: inherit; }
+    .wrap{ max-width: 1200px; margin: 0 auto; padding: 18px 18px 40px; }
+
+    /* Top bar */
+    .topbar{
+      position: sticky; top: 0;
+      backdrop-filter: blur(14px);
+      background: rgba(11,16,32,0.65);
+      border-bottom: 1px solid var(--border);
+      z-index: 10;
+    }
+    .topbar .wrap{ padding-top: 14px; padding-bottom: 14px; }
+    .brand{
+      display:flex; align-items:center; gap:12px;
+    }
+    .logo{
+      width: 34px; height: 34px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, rgba(124,92,255,1), rgba(25,195,125,1));
+      box-shadow: var(--shadow);
+    }
+    .brand h1{
+      font-size: 16px; margin:0; letter-spacing: .2px;
+    }
+    .brand .sub{
+      font-size: 12px; color: var(--muted); margin-top: 2px;
+    }
+    .topbar-row{
+      display:flex; align-items:center; justify-content: space-between;
+      gap: 14px;
+    }
+
+    /* Controls */
+    .controls{
+      display:flex; gap:10px; flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+    .field{
+      display:flex; align-items:center; gap:8px;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.04);
+      border-radius: 12px;
+    }
+    .field input, .field select{
+      border:0; outline:0; background: transparent;
+      color: var(--text);
+      font-size: 13px;
+      min-width: 160px;
+    }
+    .field input::placeholder{ color: var(--muted2); }
+    .field select option{ color: #111; }
+    .btn{
+      display:inline-flex; align-items:center; gap:8px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.06);
+      text-decoration:none;
+      font-size: 13px;
+      color: var(--text);
+      cursor:pointer;
+      transition: transform .05s ease, background .15s ease;
+    }
+    .btn:hover{ background: rgba(255,255,255,0.10); }
+    .btn:active{ transform: translateY(1px); }
+    .btn.primary{
+      border-color: rgba(124,92,255,0.55);
+      background: rgba(124,92,255,0.18);
+    }
+
+    /* Hero */
+    .hero{
+      margin-top: 18px;
+      padding: 18px;
+      border: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    .hero-grid{
+      display:grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 14px;
+      align-items: start;
+    }
+    .hero h2{
+      margin: 0 0 6px;
+      font-size: 20px;
+      letter-spacing: .2px;
+    }
+    .hero p{
+      margin:0;
+      color: var(--muted);
+      line-height: 1.45;
+      font-size: 13px;
+      max-width: 70ch;
+    }
+    .meta-line{
+      margin-top: 10px;
+      display:flex; flex-wrap: wrap;
+      gap:10px;
+      color: var(--muted2);
+      font-size: 12px;
+      font-family: var(--mono);
+    }
+
+    /* KPI cards */
+    .kpis{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    .kpi{
+      padding: 12px 12px;
+      border-radius: var(--radius2);
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.05);
+    }
+    .kpi .label{ color: var(--muted); font-size: 12px; }
+    .kpi .value{ margin-top: 6px; font-size: 18px; font-weight: 650; letter-spacing: .2px; }
+    .kpi .hint{ margin-top: 4px; color: var(--muted2); font-size: 11px; font-family: var(--mono); }
+
+    /* Table */
+    .card{
+      margin-top: 14px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.04);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+    .card-head{
+      display:flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items:center;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(255,255,255,0.03);
+    }
+    .card-head .title{
+      font-weight: 650;
+      letter-spacing: .2px;
+    }
+    .card-head .small{
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    table{
+      width:100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    thead th{
+      text-align:left;
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 600;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(255,255,255,0.02);
+      user-select: none;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    thead th .sort{
+      margin-left: 6px;
+      color: var(--muted2);
+      font-size: 10px;
+    }
+    tbody td{
+      padding: 10px 14px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      color: rgba(255,255,255,0.88);
+      vertical-align: top;
+    }
+    tbody tr:hover{
+      background: rgba(255,255,255,0.04);
+    }
+    .pill{
+      display:inline-flex; align-items:center;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(255,255,255,0.05);
+      font-size: 12px;
+      color: rgba(255,255,255,0.86);
+      font-family: var(--mono);
+    }
+    .price{
+      font-family: var(--mono);
+      color: rgba(255,255,255,0.95);
+      white-space: nowrap;
+    }
+    .muted{ color: var(--muted); }
+    .link a{
+      color: rgba(124,92,255,0.95);
+      text-decoration: none;
+    }
+    .link a:hover{ text-decoration: underline; }
+
+    .footer{
+      margin-top: 18px;
+      color: var(--muted2);
+      font-size: 12px;
+      display:flex; justify-content: space-between; gap: 10px; flex-wrap: wrap;
+    }
+
+    /* Responsive */
+    @media (max-width: 980px){
+      .hero-grid{ grid-template-columns: 1fr; }
+      .kpis{ grid-template-columns: 1fr; }
+      .controls{ justify-content: flex-start; }
+      .field input, .field select{ min-width: 220px; }
+    }
+    @media (max-width: 560px){
+      .field input, .field select{ min-width: 160px; }
+      tbody td, thead th{ padding-left: 10px; padding-right: 10px; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="topbar">
+    <div class="wrap">
+      <div class="topbar-row">
+        <div class="brand">
+          <div class="logo" aria-hidden="true"></div>
+          <div>
+            <h1>GPU Price Monitor</h1>
+            <div class="sub">Daily snapshots across neo cloud providers</div>
+          </div>
+        </div>
+
+        <div class="controls">
+          <div class="field">
+            <span class="muted">Provider</span>
+            <select id="provider"></select>
+          </div>
+          <div class="field">
+            <span class="muted">Search</span>
+            <input id="q" placeholder="H100, A100, L40S, B200…" />
+          </div>
+          <a class="btn" id="btnJson" href="#" target="_blank" rel="noreferrer">Download JSON</a>
+          <a class="btn" id="btnCsv" href="#" target="_blank" rel="noreferrer">Download CSV</a>
+          <button class="btn primary" id="btnReset" type="button">Reset</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="hero">
+      <div class="hero-grid">
+        <div>
+          <h2>Compare GPU pricing quickly</h2>
+          <p>
+            This page pulls the latest merged dataset from your public R2 bucket and renders it locally in the browser.
+            Use the provider filter and search to slice the data. Click table headers to sort.
+          </p>
+          <div class="meta-line" id="metaLine">Loading…</div>
+        </div>
+
+        <div class="kpis">
+          <div class="kpi">
+            <div class="label">Rows</div>
+            <div class="value" id="kpiRows">—</div>
+            <div class="hint">records in all.json</div>
+          </div>
+          <div class="kpi">
+            <div class="label">Providers</div>
+            <div class="value" id="kpiProviders">—</div>
+            <div class="hint">unique providers</div>
+          </div>
+          <div class="kpi">
+            <div class="label">Updated</div>
+            <div class="value" id="kpiUpdated">—</div>
+            <div class="hint">meta.json if available</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="title">Latest pricing</div>
+          <div class="small" id="tableSub">—</div>
+        </div>
+        <div class="small" id="status">Fetching data…</div>
+      </div>
+
+      <div style="overflow:auto;">
+        <table id="t">
+          <thead>
+            <tr>
+              <th data-key="provider">Provider<span class="sort" id="s_provider"></span></th>
+              <th data-key="gpu">GPU<span class="sort" id="s_gpu"></span></th>
+              <th data-key="price_num">Price/hr<span class="sort" id="s_price_num"></span></th>
+              <th data-key="gpu_count">GPUs<span class="sort" id="s_gpu_count"></span></th>
+              <th data-key="vram">VRAM<span class="sort" id="s_vram"></span></th>
+              <th data-key="vcpu">vCPU<span class="sort" id="s_vcpu"></span></th>
+              <th data-key="ram">RAM<span class="sort" id="s_ram"></span></th>
+              <th data-key="source">Source<span class="sort" id="s_source"></span></th>
+            </tr>
+          </thead>
+          <tbody id="tb"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="footer">
+      <div>Tip: keep a merged <span class="pill">latest/all.json</span> for the UI and <span class="pill">latest/all.csv</span> for downloads.</div>
+      <div class="muted">Built as static UI + R2 data (no servers).</div>
+    </div>
+  </div>
+
+  <script>
+    // ---- Configure these ----
+    const DATA_JSON_URL = "https://freellm.org/latest/all.json";
+    const DATA_CSV_URL  = "https://freellm.org/latest/all.csv";
+    const META_URL      = "https://freellm.org/latest/meta.json"; // optional; ok if 404
+
+    // ---- Utilities ----
+    const $ = (id) => document.getElementById(id);
+
+    function clean(s){ return (s ?? "").toString().trim(); }
+
+    function toNumber(x){
+      if (x === null || x === undefined) return null;
+      const s = clean(x);
+      if (!s) return null;
+      const m = s.match(/[-+]?\d*\.?\d+/);
+      if (!m) return null;
+      const n = Number(m[0]);
+      return Number.isFinite(n) ? n : null;
+    }
+
+    function normalizeRow(r){
+      const provider = clean(r.provider);
+
+      const gpu =
+        clean(r.gpu_model) || clean(r.product) || clean(r.title) || clean(r.item);
+
+      // pick best available price field, try to make it numeric
+      const priceRaw =
+        (r.price_per_hour_usd ?? r.price_per_gpu_hour ?? r.secure_price ?? r.community_price ?? r.price ?? "");
+
+      const priceNum = typeof priceRaw === "number" ? priceRaw : toNumber(priceRaw);
+
+      const gpuCount = r.gpu_count ?? r.gpuCount ?? null;
+
+      const vram =
+        r.vram_gb ?? r.gpuVram ?? null;
+
+      const vcpu =
+        r.vcpus ?? r.vCpUs ?? null;
+
+      const ram =
+        r.system_ram_gb ?? r.ram_gb ?? r.memory ?? null;
+
+      const source =
+        clean(r.deploy_url) || clean(r.link) || "";
+
+      return {
+        provider,
+        gpu,
+        price_raw: priceRaw,
+        price_num: priceNum,
+        gpu_count: gpuCount,
+        vram,
+        vcpu,
+        ram,
+        source,
+      };
+    }
+
+    function fmtPrice(row){
+      if (row.price_num !== null && row.price_num !== undefined){
+        return `$${row.price_num.toFixed(2)}`;
+      }
+      const s = clean(row.price_raw);
+      return s ? s : "—";
+    }
+
+    function unique(arr){
+      return Array.from(new Set(arr));
+    }
+
+    // ---- State ----
+    let ALL = [];
+    let VIEW = [];
+    let sortKey = "price_num";
+    let sortDir = "asc";
+
+    function setStatus(msg){
+      $("status").textContent = msg;
+    }
+
+    function setSortIndicators(){
+      const keys = ["provider","gpu","price_num","gpu_count","vram","vcpu","ram","source"];
+      keys.forEach(k => $("s_"+k).textContent = "");
+      const arrow = sortDir === "asc" ? "▲" : "▼";
+      const el = $("s_"+sortKey);
+      if (el) el.textContent = arrow;
+    }
+
+    function compare(a,b){
+      const va = a[sortKey];
+      const vb = b[sortKey];
+
+      // numeric-first sort when possible
+      const na = (typeof va === "number") ? va : toNumber(va);
+      const nb = (typeof vb === "number") ? vb : toNumber(vb);
+
+      let c = 0;
+      if (na !== null && nb !== null){
+        c = na - nb;
+      } else {
+        c = clean(va).localeCompare(clean(vb));
+      }
+      return sortDir === "asc" ? c : -c;
+    }
+
+    function applyFilters(){
+      const p = $("provider").value;
+      const q = clean($("q").value).toLowerCase();
+
+      VIEW = ALL.filter(r => {
+        if (p !== "all" && r.provider !== p) return false;
+        if (q){
+          const hay = `${r.provider} ${r.gpu} ${r.price_raw} ${r.vram} ${r.vcpu} ${r.ram}`.toLowerCase();
+          if (!hay.includes(q)) return false;
+        }
+        return true;
+      });
+
+      VIEW.sort(compare);
+      render();
+    }
+
+    function render(){
+      const tb = $("tb");
+      tb.innerHTML = "";
+
+      const frag = document.createDocumentFragment();
+      for (const r of VIEW){
+        const tr = document.createElement("tr");
+
+        const tdProvider = document.createElement("td");
+        tdProvider.innerHTML = `<span class="pill">${r.provider || "—"}</span>`;
+        tr.appendChild(tdProvider);
+
+        const tdGpu = document.createElement("td");
+        tdGpu.textContent = r.gpu || "—";
+        tr.appendChild(tdGpu);
+
+        const tdPrice = document.createElement("td");
+        tdPrice.className = "price";
+        tdPrice.textContent = fmtPrice(r);
+        tr.appendChild(tdPrice);
+
+        const tdGc = document.createElement("td");
+        tdGc.textContent = (r.gpu_count ?? "—");
+        tr.appendChild(tdGc);
+
+        const tdVram = document.createElement("td");
+        tdVram.textContent = (r.vram ?? "—");
+        tr.appendChild(tdVram);
+
+        const tdVcpu = document.createElement("td");
+        tdVcpu.textContent = (r.vcpu ?? "—");
+        tr.appendChild(tdVcpu);
+
+        const tdRam = document.createElement("td");
+        tdRam.textContent = (r.ram ?? "—");
+        tr.appendChild(tdRam);
+
+        const tdSrc = document.createElement("td");
+        tdSrc.className = "link";
+        if (r.source){
+          const a = document.createElement("a");
+          a.href = r.source;
+          a.target = "_blank";
+          a.rel = "noreferrer";
+          a.textContent = "link";
+          tdSrc.appendChild(a);
+        } else {
+          tdSrc.textContent = "—";
+          tdSrc.className = "muted";
+        }
+        tr.appendChild(tdSrc);
+
+        frag.appendChild(tr);
+      }
+      tb.appendChild(frag);
+
+      $("tableSub").textContent = `Showing ${VIEW.length} of ${ALL.length} rows • Sorted by ${sortKey} (${sortDir})`;
+      $("kpiRows").textContent = `${ALL.length}`;
+      $("kpiProviders").textContent = `${unique(ALL.map(r => r.provider).filter(Boolean)).length}`;
+      setSortIndicators();
+    }
+
+    async function loadMeta(){
+      try{
+        const res = await fetch(META_URL, { cache: "no-store" });
+        if (!res.ok) return null;
+        return await res.json();
+      }catch{
+        return null;
+      }
+    }
+
+    async function main(){
+      $("btnJson").href = DATA_JSON_URL;
+      $("btnCsv").href = DATA_CSV_URL;
+
+      setStatus("Fetching data…");
+      const t0 = performance.now();
+
+      const res = await fetch(DATA_JSON_URL, { cache: "no-store" });
+      if (!res.ok) throw new Error(`Failed to fetch all.json (${res.status})`);
+
+      const raw = await res.json();
+      if (!Array.isArray(raw)) throw new Error("all.json is not an array");
+
+      ALL = raw.map(normalizeRow).filter(r => r.gpu || r.provider);
+
+      // Provider dropdown
+      const providers = ["all", ...unique(ALL.map(r => r.provider).filter(Boolean)).sort()];
+      $("provider").innerHTML = providers.map(p => `<option value="${p}">${p}</option>`).join("");
+
+      // Meta line
+      const meta = await loadMeta();
+      const dt = new Date();
+      const metaBits = [
+        `data=${DATA_JSON_URL}`,
+        `loaded_at_utc=${dt.toISOString()}`,
+      ];
+      if (meta?.generated_at_utc) metaBits.push(`generated_at_utc=${meta.generated_at_utc}`);
+      $("metaLine").textContent = metaBits.join(" • ");
+
+      // KPI updated
+      $("kpiUpdated").textContent = meta?.generated_at_utc ? meta.generated_at_utc.slice(0,10) : "—";
+
+      // Default sort: price ascending when numeric exists
+      sortKey = "price_num";
+      sortDir = "asc";
+
+      $("provider").addEventListener("change", applyFilters);
+      $("q").addEventListener("input", () => {
+        // small debounce
+        window.clearTimeout(window.__qTimer);
+        window.__qTimer = window.setTimeout(applyFilters, 120);
+      });
+
+      // Sort by clicking headers
+      document.querySelectorAll("thead th").forEach(th => {
+        th.addEventListener("click", () => {
+          const k = th.getAttribute("data-key");
+          if (!k) return;
+          if (sortKey === k) sortDir = (sortDir === "asc" ? "desc" : "asc");
+          else { sortKey = k; sortDir = "asc"; }
+          applyFilters();
+        });
+      });
+
+      $("btnReset").addEventListener("click", () => {
+        $("provider").value = "all";
+        $("q").value = "";
+        sortKey = "price_num";
+        sortDir = "asc";
+        applyFilters();
+      });
+
+      applyFilters();
+
+      const ms = Math.round(performance.now() - t0);
+      setStatus(`Loaded in ${ms}ms`);
+    }
+
+    main().catch(err => {
+      setStatus("Error");
+      const pre = document.createElement("pre");
+      pre.style.padding = "14px";
+      pre.style.color = "#ffb4b4";
+      pre.textContent = err.stack || String(err);
+      document.body.appendChild(pre);
+    });
+  </script>
+</body>
+</html>

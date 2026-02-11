@@ -1,0 +1,1036 @@
+[
+  {
+    "provider": "azure",
+    "product": "NVIDIA A100",
+    "gpu_count": 1,
+    "vram_gb": 40,
+    "vcpus": 6,
+    "system_ram_gb": 55,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 3.4,
+    "raw_price": "$3.40"
+  },
+  {
+    "provider": "azure",
+    "product": "NVIDIA H100",
+    "gpu_count": 1,
+    "vram_gb": 80,
+    "vcpus": 24,
+    "system_ram_gb": 220,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 5.2,
+    "raw_price": "$5.20"
+  },
+  {
+    "provider": "azure",
+    "product": "NVIDIA V100",
+    "gpu_count": 1,
+    "vram_gb": 16,
+    "vcpus": 6,
+    "system_ram_gb": 112,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 2.48,
+    "raw_price": "$2.48"
+  },
+  {
+    "provider": "coreweave",
+    "product": "NVIDIA GB200 NVL72",
+    "gpu_count": null,
+    "vram_gb": 186,
+    "vcpus": 144,
+    "system_ram_gb": 960,
+    "local_storage_tb": 30.72,
+    "price_per_hour_usd": 42.0,
+    "raw_price": "$42.00"
+  },
+  {
+    "provider": "coreweave",
+    "product": "NVIDIA B200",
+    "gpu_count": 8,
+    "vram_gb": 180,
+    "vcpus": 128,
+    "system_ram_gb": 2048,
+    "local_storage_tb": 61.44,
+    "price_per_hour_usd": 68.8,
+    "raw_price": "$68.80"
+  },
+  {
+    "provider": "coreweave",
+    "product": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+    "gpu_count": 8,
+    "vram_gb": 96,
+    "vcpus": 128,
+    "system_ram_gb": 1024,
+    "local_storage_tb": 7.68,
+    "price_per_hour_usd": 20.0,
+    "raw_price": "$20.00"
+  },
+  {
+    "provider": "coreweave",
+    "product": "NVIDIA HGX H200",
+    "gpu_count": 8,
+    "vram_gb": 141,
+    "vcpus": 128,
+    "system_ram_gb": 2048,
+    "local_storage_tb": 61.44,
+    "price_per_hour_usd": 50.44,
+    "raw_price": "$50.44"
+  },
+  {
+    "provider": "coreweave",
+    "product": "NVIDIA GH200",
+    "gpu_count": 1,
+    "vram_gb": 96,
+    "vcpus": 72,
+    "system_ram_gb": 480,
+    "local_storage_tb": 7.68,
+    "price_per_hour_usd": 6.5,
+    "raw_price": "$6.50"
+  },
+  {
+    "provider": "coreweave",
+    "product": "NVIDIA L40",
+    "gpu_count": 8,
+    "vram_gb": 48,
+    "vcpus": 128,
+    "system_ram_gb": 1024,
+    "local_storage_tb": 7.68,
+    "price_per_hour_usd": 10.0,
+    "raw_price": "$10.00"
+  },
+  {
+    "provider": "coreweave",
+    "product": "NVIDIA L40S",
+    "gpu_count": 8,
+    "vram_gb": 48,
+    "vcpus": 128,
+    "system_ram_gb": 1024,
+    "local_storage_tb": 7.68,
+    "price_per_hour_usd": 18.0,
+    "raw_price": "$18.00"
+  },
+  {
+    "provider": "coreweave",
+    "product": "NVIDIA A100",
+    "gpu_count": 8,
+    "vram_gb": 80,
+    "vcpus": 128,
+    "system_ram_gb": 2048,
+    "local_storage_tb": 7.68,
+    "price_per_hour_usd": 21.6,
+    "raw_price": "$21.60"
+  },
+  {
+    "provider": "crusoe",
+    "product": "NVIDIA GB200",
+    "gpu_count": null,
+    "vram_gb": 186,
+    "vcpus": null,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": null
+  },
+  {
+    "provider": "crusoe",
+    "product": "NVIDIA B200",
+    "gpu_count": null,
+    "vram_gb": 180,
+    "vcpus": null,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": null
+  },
+  {
+    "provider": "crusoe",
+    "product": "NVIDIA H200",
+    "gpu_count": null,
+    "vram_gb": 141,
+    "vcpus": null,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 4.29
+  },
+  {
+    "provider": "crusoe",
+    "product": "NVIDIA H100",
+    "gpu_count": null,
+    "vram_gb": 80,
+    "vcpus": null,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 3.9
+  },
+  {
+    "provider": "crusoe",
+    "product": "NVIDIA A100",
+    "gpu_count": null,
+    "vram_gb": 80,
+    "vcpus": null,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 1.95
+  },
+  {
+    "provider": "crusoe",
+    "product": "NVIDIA A100",
+    "gpu_count": null,
+    "vram_gb": 80,
+    "vcpus": null,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 1.65
+  },
+  {
+    "provider": "crusoe",
+    "product": "NVIDIA A100",
+    "gpu_count": null,
+    "vram_gb": 40,
+    "vcpus": null,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 1.45
+  },
+  {
+    "provider": "crusoe",
+    "product": "NVIDIA L40S",
+    "gpu_count": null,
+    "vram_gb": 48,
+    "vcpus": null,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 1.0
+  },
+  {
+    "provider": "crusoe",
+    "product": "NVIDIA A40",
+    "gpu_count": null,
+    "vram_gb": 48,
+    "vcpus": null,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 0.9
+  },
+  {
+    "provider": "crusoe",
+    "product": "AMD MI355X",
+    "gpu_count": null,
+    "vram_gb": 288,
+    "vcpus": null,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": null
+  },
+  {
+    "provider": "crusoe",
+    "product": "AMD MI300X",
+    "gpu_count": null,
+    "vram_gb": 192,
+    "vcpus": null,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 3.45
+  },
+  {
+    "provider": "crusoe",
+    "product": "General-purpose",
+    "gpu_count": null,
+    "vram_gb": null,
+    "vcpus": null,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 0.04
+  },
+  {
+    "provider": "crusoe",
+    "product": "Storage-optimized",
+    "gpu_count": null,
+    "vram_gb": null,
+    "vcpus": null,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 0.09
+  },
+  {
+    "provider": "crusoe",
+    "product": "Persistent disks",
+    "gpu_count": null,
+    "vram_gb": null,
+    "vcpus": null,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 0.08
+  },
+  {
+    "provider": "crusoe",
+    "product": "Shared disks",
+    "gpu_count": null,
+    "vram_gb": null,
+    "vcpus": null,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 0.07
+  },
+  {
+    "provider": "crusoe",
+    "product": "Container registry usage",
+    "gpu_count": null,
+    "vram_gb": null,
+    "vcpus": null,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 0.1
+  },
+  {
+    "provider": "crusoe",
+    "product": "Cluster pricing",
+    "gpu_count": null,
+    "vram_gb": null,
+    "vcpus": null,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 0.1
+  },
+  {
+    "provider": "crusoe",
+    "product": "DeepSeek",
+    "gpu_count": null,
+    "vram_gb": null,
+    "vcpus": null,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 1.35
+  },
+  {
+    "provider": "crusoe",
+    "product": "DeepSeek",
+    "gpu_count": null,
+    "vram_gb": null,
+    "vcpus": null,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 0.5
+  },
+  {
+    "provider": "crusoe",
+    "product": "Gemma 3",
+    "gpu_count": null,
+    "vram_gb": null,
+    "vcpus": null,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 0.08
+  },
+  {
+    "provider": "crusoe",
+    "product": "GPT-OSS",
+    "gpu_count": null,
+    "vram_gb": null,
+    "vcpus": null,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 0.15
+  },
+  {
+    "provider": "crusoe",
+    "product": "Kimi-K2",
+    "gpu_count": null,
+    "vram_gb": null,
+    "vcpus": null,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 0.6
+  },
+  {
+    "provider": "crusoe",
+    "product": "Llama",
+    "gpu_count": null,
+    "vram_gb": null,
+    "vcpus": null,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 0.25
+  },
+  {
+    "provider": "crusoe",
+    "product": "Qwen3",
+    "gpu_count": null,
+    "vram_gb": null,
+    "vcpus": null,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 0.22
+  },
+  {
+    "provider": "denvr",
+    "product": "AMD Mi300X",
+    "gpu_count": 8,
+    "vram_gb": 192.0,
+    "vcpus": 224,
+    "system_ram_gb": 2048,
+    "local_storage_tb": 3.8,
+    "price_per_hour_usd": null
+  },
+  {
+    "provider": "denvr",
+    "product": "Intel Gaudi 2",
+    "gpu_count": 8,
+    "vram_gb": 96.0,
+    "vcpus": 160,
+    "system_ram_gb": 1024,
+    "local_storage_tb": 7.6,
+    "price_per_hour_usd": 1.25
+  },
+  {
+    "provider": "denvr",
+    "product": "Intel Gaudi 3",
+    "gpu_count": 8,
+    "vram_gb": 128.0,
+    "vcpus": 224,
+    "system_ram_gb": 2048,
+    "local_storage_tb": 7.6,
+    "price_per_hour_usd": null
+  },
+  {
+    "provider": "denvr",
+    "product": "NVIDIA A100 PCIe",
+    "gpu_count": 4,
+    "vram_gb": 40.0,
+    "vcpus": 64,
+    "system_ram_gb": 512,
+    "local_storage_tb": 3.8,
+    "price_per_hour_usd": 1.15
+  },
+  {
+    "provider": "denvr",
+    "product": "NVIDIA A100 SXM",
+    "gpu_count": 8,
+    "vram_gb": 80.0,
+    "vcpus": 208,
+    "system_ram_gb": 1024,
+    "local_storage_tb": 3.8,
+    "price_per_hour_usd": 1.3
+  },
+  {
+    "provider": "denvr",
+    "product": "NVIDIA A100 SXM",
+    "gpu_count": 8,
+    "vram_gb": 40.0,
+    "vcpus": 128,
+    "system_ram_gb": 1024,
+    "local_storage_tb": 3.8,
+    "price_per_hour_usd": 1.15
+  },
+  {
+    "provider": "denvr",
+    "product": "NVIDIA A40 PCIe",
+    "gpu_count": 4,
+    "vram_gb": 48.0,
+    "vcpus": 128,
+    "system_ram_gb": 512,
+    "local_storage_tb": 3.8,
+    "price_per_hour_usd": 0.65
+  },
+  {
+    "provider": "denvr",
+    "product": "NVIDIA B200 SXM",
+    "gpu_count": 8,
+    "vram_gb": 180.0,
+    "vcpus": 224,
+    "system_ram_gb": 2048,
+    "local_storage_tb": 3.8,
+    "price_per_hour_usd": null
+  },
+  {
+    "provider": "denvr",
+    "product": "NVIDIA GB200",
+    "gpu_count": 2,
+    "vram_gb": 384.0,
+    "vcpus": 72,
+    "system_ram_gb": 2048,
+    "local_storage_tb": 3.8,
+    "price_per_hour_usd": null
+  },
+  {
+    "provider": "denvr",
+    "product": "NVIDIA GH200",
+    "gpu_count": 1,
+    "vram_gb": 96.0,
+    "vcpus": 72,
+    "system_ram_gb": 480,
+    "local_storage_tb": 3.8,
+    "price_per_hour_usd": 3.87
+  },
+  {
+    "provider": "denvr",
+    "product": "NVIDIA H100 SXM",
+    "gpu_count": 8,
+    "vram_gb": 80.0,
+    "vcpus": 208,
+    "system_ram_gb": 1024,
+    "local_storage_tb": 3.8,
+    "price_per_hour_usd": 2.1
+  },
+  {
+    "provider": "denvr",
+    "product": "NVIDIA H200 SXM",
+    "gpu_count": 8,
+    "vram_gb": 141.0,
+    "vcpus": 208,
+    "system_ram_gb": 2048,
+    "local_storage_tb": 3.8,
+    "price_per_hour_usd": null
+  },
+  {
+    "provider": "gcp",
+    "product": "NVIDIA A100",
+    "gpu_count": 1,
+    "vram_gb": 40,
+    "vcpus": null,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 2.93,
+    "raw_price": "$2.93"
+  },
+  {
+    "provider": "gcp",
+    "product": "NVIDIA H100",
+    "gpu_count": 1,
+    "vram_gb": 80,
+    "vcpus": null,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 4.1,
+    "raw_price": "$4.10"
+  },
+  {
+    "provider": "gcp",
+    "product": "NVIDIA T4",
+    "gpu_count": 1,
+    "vram_gb": 16,
+    "vcpus": null,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 0.35,
+    "raw_price": "$0.35"
+  },
+  {
+    "provider": "lambda",
+    "product": "On-Demand",
+    "gpu_count": null,
+    "vram_gb": null,
+    "vcpus": null,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": null
+  },
+  {
+    "provider": "lambda",
+    "product": "Reserved",
+    "gpu_count": null,
+    "vram_gb": null,
+    "vcpus": null,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": null
+  },
+  {
+    "provider": "lambda",
+    "product": "Reserved",
+    "gpu_count": null,
+    "vram_gb": null,
+    "vcpus": null,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": null
+  },
+  {
+    "provider": "lambda",
+    "product": "Reserved",
+    "gpu_count": null,
+    "vram_gb": null,
+    "vcpus": null,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": null
+  },
+  {
+    "provider": "lambda",
+    "product": "On-Demand",
+    "gpu_count": null,
+    "vram_gb": null,
+    "vcpus": null,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": null
+  },
+  {
+    "provider": "lambda",
+    "product": "Reserved",
+    "gpu_count": null,
+    "vram_gb": null,
+    "vcpus": null,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": null
+  },
+  {
+    "provider": "lambda",
+    "product": "NVIDIA B200 SXM6",
+    "gpu_count": null,
+    "vram_gb": 180.0,
+    "vcpus": 208,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 4.99
+  },
+  {
+    "provider": "lambda",
+    "product": "NVIDIA H100 SXM",
+    "gpu_count": null,
+    "vram_gb": 80.0,
+    "vcpus": 208,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 2.99
+  },
+  {
+    "provider": "lambda",
+    "product": "NVIDIA A100 SXM",
+    "gpu_count": null,
+    "vram_gb": 80.0,
+    "vcpus": 240,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 1.79
+  },
+  {
+    "provider": "lambda",
+    "product": "NVIDIA A100 SXM",
+    "gpu_count": null,
+    "vram_gb": 40.0,
+    "vcpus": 124,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 1.29
+  },
+  {
+    "provider": "lambda",
+    "product": "NVIDIA Tesla V100",
+    "gpu_count": null,
+    "vram_gb": 16.0,
+    "vcpus": 88,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 0.55
+  },
+  {
+    "provider": "lambda",
+    "product": "NVIDIA B200 SXM6",
+    "gpu_count": null,
+    "vram_gb": 180.0,
+    "vcpus": 104,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 5.09
+  },
+  {
+    "provider": "lambda",
+    "product": "NVIDIA H100 SXM",
+    "gpu_count": null,
+    "vram_gb": 80.0,
+    "vcpus": 104,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 3.09
+  },
+  {
+    "provider": "lambda",
+    "product": "NVIDIA A100 PCIe",
+    "gpu_count": null,
+    "vram_gb": 40.0,
+    "vcpus": 120,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 1.29
+  },
+  {
+    "provider": "lambda",
+    "product": "NVIDIA A6000",
+    "gpu_count": null,
+    "vram_gb": 48.0,
+    "vcpus": 56,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 0.8
+  },
+  {
+    "provider": "lambda",
+    "product": "NVIDIA B200 SXM6",
+    "gpu_count": null,
+    "vram_gb": 180.0,
+    "vcpus": 52,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 5.19
+  },
+  {
+    "provider": "lambda",
+    "product": "NVIDIA H100 SXM",
+    "gpu_count": null,
+    "vram_gb": 80.0,
+    "vcpus": 52,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 3.19
+  },
+  {
+    "provider": "lambda",
+    "product": "NVIDIA A100 PCIe",
+    "gpu_count": null,
+    "vram_gb": 40.0,
+    "vcpus": 60,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 1.29
+  },
+  {
+    "provider": "lambda",
+    "product": "NVIDIA A6000",
+    "gpu_count": null,
+    "vram_gb": 48.0,
+    "vcpus": 28,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 0.8
+  },
+  {
+    "provider": "lambda",
+    "product": "NVIDIA B200 SXM6",
+    "gpu_count": null,
+    "vram_gb": 180.0,
+    "vcpus": 26,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 5.29
+  },
+  {
+    "provider": "lambda",
+    "product": "NVIDIA GH200",
+    "gpu_count": null,
+    "vram_gb": 96.0,
+    "vcpus": 64,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 1.99
+  },
+  {
+    "provider": "lambda",
+    "product": "NVIDIA H100 SXM",
+    "gpu_count": null,
+    "vram_gb": 80.0,
+    "vcpus": 26,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 3.29
+  },
+  {
+    "provider": "lambda",
+    "product": "NVIDIA H100 PCIe",
+    "gpu_count": null,
+    "vram_gb": 80.0,
+    "vcpus": 26,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 2.49
+  },
+  {
+    "provider": "lambda",
+    "product": "NVIDIA A100 SXM",
+    "gpu_count": null,
+    "vram_gb": 40.0,
+    "vcpus": 30,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 1.29
+  },
+  {
+    "provider": "lambda",
+    "product": "NVIDIA A100 PCIe",
+    "gpu_count": null,
+    "vram_gb": 40.0,
+    "vcpus": 30,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 1.29
+  },
+  {
+    "provider": "lambda",
+    "product": "NVIDIA A10",
+    "gpu_count": null,
+    "vram_gb": 24.0,
+    "vcpus": 30,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 0.75
+  },
+  {
+    "provider": "lambda",
+    "product": "NVIDIA A6000",
+    "gpu_count": null,
+    "vram_gb": 48.0,
+    "vcpus": 14,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 0.8
+  },
+  {
+    "provider": "lambda",
+    "product": "NVIDIA Quadro RTX 6000",
+    "gpu_count": null,
+    "vram_gb": 24.0,
+    "vcpus": 14,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 0.5
+  },
+  {
+    "provider": "nebius",
+    "product": "NVIDIA GB200 NVL72*",
+    "gpu_count": null,
+    "vram_gb": 186.0,
+    "vcpus": 112,
+    "system_ram_gb": 800,
+    "local_storage_tb": null,
+    "price_per_hour_usd": null
+  },
+  {
+    "provider": "nebius",
+    "product": "NVIDIA HGX B200",
+    "gpu_count": null,
+    "vram_gb": 180.0,
+    "vcpus": 16,
+    "system_ram_gb": 200,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 5.5
+  },
+  {
+    "provider": "nebius",
+    "product": "NVIDIA HGX H200",
+    "gpu_count": null,
+    "vram_gb": 141.0,
+    "vcpus": 16,
+    "system_ram_gb": 200,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 3.5
+  },
+  {
+    "provider": "nebius",
+    "product": "NVIDIA HGX H100",
+    "gpu_count": null,
+    "vram_gb": 80.0,
+    "vcpus": 16,
+    "system_ram_gb": 200,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 2.95
+  },
+  {
+    "provider": "nebius",
+    "product": "NVIDIA L40S GPU with AMD",
+    "gpu_count": null,
+    "vram_gb": 48.0,
+    "vcpus": 16,
+    "system_ram_gb": 96,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 1.82
+  },
+  {
+    "provider": "nebius",
+    "product": "NVIDIA L40S GPU with Intel",
+    "gpu_count": null,
+    "vram_gb": 48.0,
+    "vcpus": 8,
+    "system_ram_gb": 32,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 1.55
+  },
+  {
+    "provider": "runpod",
+    "product": "H200",
+    "gpu_count": null,
+    "vram_gb": 141.0,
+    "vcpus": 24,
+    "system_ram_gb": 276,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 3.59
+  },
+  {
+    "provider": "runpod",
+    "product": "B200",
+    "gpu_count": null,
+    "vram_gb": 180.0,
+    "vcpus": 28,
+    "system_ram_gb": 283,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 4.99
+  },
+  {
+    "provider": "runpod",
+    "product": "RTX Pro 6000",
+    "gpu_count": null,
+    "vram_gb": 96.0,
+    "vcpus": 16,
+    "system_ram_gb": 188,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 1.89
+  },
+  {
+    "provider": "runpod",
+    "product": "H100 NVL",
+    "gpu_count": null,
+    "vram_gb": 94.0,
+    "vcpus": 16,
+    "system_ram_gb": 94,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 3.07
+  },
+  {
+    "provider": "runpod",
+    "product": "H100 PCIe",
+    "gpu_count": null,
+    "vram_gb": 80.0,
+    "vcpus": 16,
+    "system_ram_gb": 188,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 2.39
+  },
+  {
+    "provider": "runpod",
+    "product": "H100 SXM",
+    "gpu_count": null,
+    "vram_gb": 80.0,
+    "vcpus": 20,
+    "system_ram_gb": 125,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 2.69
+  },
+  {
+    "provider": "runpod",
+    "product": "A100 PCIe",
+    "gpu_count": null,
+    "vram_gb": 80.0,
+    "vcpus": 8,
+    "system_ram_gb": 117,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 1.39
+  },
+  {
+    "provider": "runpod",
+    "product": "A100 SXM",
+    "gpu_count": null,
+    "vram_gb": 80.0,
+    "vcpus": 16,
+    "system_ram_gb": 125,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 1.49
+  },
+  {
+    "provider": "runpod",
+    "product": "L40S",
+    "gpu_count": null,
+    "vram_gb": 48.0,
+    "vcpus": 16,
+    "system_ram_gb": 94,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 0.86
+  },
+  {
+    "provider": "runpod",
+    "product": "RTX 6000 Ada",
+    "gpu_count": null,
+    "vram_gb": 48.0,
+    "vcpus": 10,
+    "system_ram_gb": 167,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 0.77
+  },
+  {
+    "provider": "runpod",
+    "product": "A40",
+    "gpu_count": null,
+    "vram_gb": 48.0,
+    "vcpus": 9,
+    "system_ram_gb": 50,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 0.4
+  },
+  {
+    "provider": "runpod",
+    "product": "L40",
+    "gpu_count": null,
+    "vram_gb": 48.0,
+    "vcpus": 8,
+    "system_ram_gb": 94,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 0.99
+  },
+  {
+    "provider": "runpod",
+    "product": "RTX A6000",
+    "gpu_count": null,
+    "vram_gb": 48.0,
+    "vcpus": 9,
+    "system_ram_gb": 50,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 0.49
+  },
+  {
+    "provider": "runpod",
+    "product": "RTX 5090",
+    "gpu_count": null,
+    "vram_gb": 32.0,
+    "vcpus": 9,
+    "system_ram_gb": 35,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 0.89
+  },
+  {
+    "provider": "runpod",
+    "product": "L4",
+    "gpu_count": null,
+    "vram_gb": 24.0,
+    "vcpus": 12,
+    "system_ram_gb": 50,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 0.39
+  },
+  {
+    "provider": "runpod",
+    "product": "RTX 3090",
+    "gpu_count": null,
+    "vram_gb": 24.0,
+    "vcpus": 16,
+    "system_ram_gb": 125,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 0.46
+  },
+  {
+    "provider": "runpod",
+    "product": "RTX 4090",
+    "gpu_count": null,
+    "vram_gb": 24.0,
+    "vcpus": 6,
+    "system_ram_gb": 41,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 0.59
+  },
+  {
+    "provider": "runpod",
+    "product": "RTX A5000",
+    "gpu_count": null,
+    "vram_gb": 24.0,
+    "vcpus": 9,
+    "system_ram_gb": 25,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 0.27
+  }
+]

@@ -1,0 +1,7 @@
+provider,product,gpu_count,vram_gb,vcpus,system_ram_gb,local_storage_tb,price_per_hour_usd
+nebius,NVIDIA GB200 NVL72*,,186.0,112,800,,
+nebius,NVIDIA HGX B200,,180.0,16,200,,5.5
+nebius,NVIDIA HGX H200,,141.0,16,200,,3.5
+nebius,NVIDIA HGX H100,,80.0,16,200,,2.95
+nebius,NVIDIA L40S GPU with AMD,,48.0,16,96,,1.82
+nebius,NVIDIA L40S GPU with Intel,,48.0,8,32,,1.55

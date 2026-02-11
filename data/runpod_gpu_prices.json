@@ -1,0 +1,182 @@
+[
+  {
+    "provider": "runpod",
+    "product": "H200",
+    "gpu_count": null,
+    "vram_gb": 141.0,
+    "vcpus": 24,
+    "system_ram_gb": 276,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 3.59
+  },
+  {
+    "provider": "runpod",
+    "product": "B200",
+    "gpu_count": null,
+    "vram_gb": 180.0,
+    "vcpus": 28,
+    "system_ram_gb": 283,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 4.99
+  },
+  {
+    "provider": "runpod",
+    "product": "RTX Pro 6000",
+    "gpu_count": null,
+    "vram_gb": 96.0,
+    "vcpus": 16,
+    "system_ram_gb": 188,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 1.89
+  },
+  {
+    "provider": "runpod",
+    "product": "H100 NVL",
+    "gpu_count": null,
+    "vram_gb": 94.0,
+    "vcpus": 16,
+    "system_ram_gb": 94,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 3.07
+  },
+  {
+    "provider": "runpod",
+    "product": "H100 PCIe",
+    "gpu_count": null,
+    "vram_gb": 80.0,
+    "vcpus": 16,
+    "system_ram_gb": 188,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 2.39
+  },
+  {
+    "provider": "runpod",
+    "product": "H100 SXM",
+    "gpu_count": null,
+    "vram_gb": 80.0,
+    "vcpus": 20,
+    "system_ram_gb": 125,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 2.69
+  },
+  {
+    "provider": "runpod",
+    "product": "A100 PCIe",
+    "gpu_count": null,
+    "vram_gb": 80.0,
+    "vcpus": 8,
+    "system_ram_gb": 117,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 1.39
+  },
+  {
+    "provider": "runpod",
+    "product": "A100 SXM",
+    "gpu_count": null,
+    "vram_gb": 80.0,
+    "vcpus": 16,
+    "system_ram_gb": 125,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 1.49
+  },
+  {
+    "provider": "runpod",
+    "product": "L40S",
+    "gpu_count": null,
+    "vram_gb": 48.0,
+    "vcpus": 16,
+    "system_ram_gb": 94,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 0.86
+  },
+  {
+    "provider": "runpod",
+    "product": "RTX 6000 Ada",
+    "gpu_count": null,
+    "vram_gb": 48.0,
+    "vcpus": 10,
+    "system_ram_gb": 167,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 0.77
+  },
+  {
+    "provider": "runpod",
+    "product": "A40",
+    "gpu_count": null,
+    "vram_gb": 48.0,
+    "vcpus": 9,
+    "system_ram_gb": 50,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 0.4
+  },
+  {
+    "provider": "runpod",
+    "product": "L40",
+    "gpu_count": null,
+    "vram_gb": 48.0,
+    "vcpus": 8,
+    "system_ram_gb": 94,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 0.99
+  },
+  {
+    "provider": "runpod",
+    "product": "RTX A6000",
+    "gpu_count": null,
+    "vram_gb": 48.0,
+    "vcpus": 9,
+    "system_ram_gb": 50,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 0.49
+  },
+  {
+    "provider": "runpod",
+    "product": "RTX 5090",
+    "gpu_count": null,
+    "vram_gb": 32.0,
+    "vcpus": 9,
+    "system_ram_gb": 35,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 0.89
+  },
+  {
+    "provider": "runpod",
+    "product": "L4",
+    "gpu_count": null,
+    "vram_gb": 24.0,
+    "vcpus": 12,
+    "system_ram_gb": 50,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 0.39
+  },
+  {
+    "provider": "runpod",
+    "product": "RTX 3090",
+    "gpu_count": null,
+    "vram_gb": 24.0,
+    "vcpus": 16,
+    "system_ram_gb": 125,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 0.46
+  },
+  {
+    "provider": "runpod",
+    "product": "RTX 4090",
+    "gpu_count": null,
+    "vram_gb": 24.0,
+    "vcpus": 6,
+    "system_ram_gb": 41,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 0.59
+  },
+  {
+    "provider": "runpod",
+    "product": "RTX A5000",
+    "gpu_count": null,
+    "vram_gb": 24.0,
+    "vcpus": 9,
+    "system_ram_gb": 25,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 0.27
+  }
+]

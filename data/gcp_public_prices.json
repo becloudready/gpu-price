@@ -1,0 +1,36 @@
+[
+  {
+    "provider": "gcp",
+    "product": "NVIDIA A100",
+    "gpu_count": 1,
+    "vram_gb": 40,
+    "vcpus": null,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 2.93,
+    "raw_price": "$2.93"
+  },
+  {
+    "provider": "gcp",
+    "product": "NVIDIA H100",
+    "gpu_count": 1,
+    "vram_gb": 80,
+    "vcpus": null,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 4.10,
+    "raw_price": "$4.10"
+  },
+  {
+    "provider": "gcp",
+    "product": "NVIDIA T4",
+    "gpu_count": 1,
+    "vram_gb": 16,
+    "vcpus": null,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 0.35,
+    "raw_price": "$0.35"
+  }
+]
+

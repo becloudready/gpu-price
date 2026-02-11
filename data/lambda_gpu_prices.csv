@@ -1,0 +1,29 @@
+provider,product,gpu_count,vram_gb,vcpus,system_ram_gb,local_storage_tb,price_per_hour_usd
+lambda,On-Demand,,,,,,
+lambda,Reserved,,,,,,
+lambda,Reserved,,,,,,
+lambda,Reserved,,,,,,
+lambda,On-Demand,,,,,,
+lambda,Reserved,,,,,,
+lambda,NVIDIA B200 SXM6,,180.0,208,,,4.99
+lambda,NVIDIA H100 SXM,,80.0,208,,,2.99
+lambda,NVIDIA A100 SXM,,80.0,240,,,1.79
+lambda,NVIDIA A100 SXM,,40.0,124,,,1.29
+lambda,NVIDIA Tesla V100,,16.0,88,,,0.55
+lambda,NVIDIA B200 SXM6,,180.0,104,,,5.09
+lambda,NVIDIA H100 SXM,,80.0,104,,,3.09
+lambda,NVIDIA A100 PCIe,,40.0,120,,,1.29
+lambda,NVIDIA A6000,,48.0,56,,,0.8
+lambda,NVIDIA B200 SXM6,,180.0,52,,,5.19
+lambda,NVIDIA H100 SXM,,80.0,52,,,3.19
+lambda,NVIDIA A100 PCIe,,40.0,60,,,1.29
+lambda,NVIDIA A6000,,48.0,28,,,0.8
+lambda,NVIDIA B200 SXM6,,180.0,26,,,5.29
+lambda,NVIDIA GH200,,96.0,64,,,1.99
+lambda,NVIDIA H100 SXM,,80.0,26,,,3.29
+lambda,NVIDIA H100 PCIe,,80.0,26,,,2.49
+lambda,NVIDIA A100 SXM,,40.0,30,,,1.29
+lambda,NVIDIA A100 PCIe,,40.0,30,,,1.29
+lambda,NVIDIA A10,,24.0,30,,,0.75
+lambda,NVIDIA A6000,,48.0,14,,,0.8
+lambda,NVIDIA Quadro RTX 6000,,24.0,14,,,0.5

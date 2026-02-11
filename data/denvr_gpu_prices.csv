@@ -1,0 +1,13 @@
+provider,product,gpu_count,vram_gb,vcpus,system_ram_gb,local_storage_tb,price_per_hour_usd
+denvr,AMD Mi300X,8,192.0,224,2048,3.8,
+denvr,Intel Gaudi 2,8,96.0,160,1024,7.6,1.25
+denvr,Intel Gaudi 3,8,128.0,224,2048,7.6,
+denvr,NVIDIA A100 PCIe,4,40.0,64,512,3.8,1.15
+denvr,NVIDIA A100 SXM,8,80.0,208,1024,3.8,1.3
+denvr,NVIDIA A100 SXM,8,40.0,128,1024,3.8,1.15
+denvr,NVIDIA A40 PCIe,4,48.0,128,512,3.8,0.65
+denvr,NVIDIA B200 SXM,8,180.0,224,2048,3.8,
+denvr,NVIDIA GB200,2,384.0,72,2048,3.8,
+denvr,NVIDIA GH200,1,96.0,72,480,3.8,3.87
+denvr,NVIDIA H100 SXM,8,80.0,208,1024,3.8,2.1
+denvr,NVIDIA H200 SXM,8,141.0,208,2048,3.8,
