@@ -1,0 +1,35 @@
+[
+  {
+    "provider": "azure",
+    "product": "NVIDIA A100",
+    "gpu_count": 1,
+    "vram_gb": 40,
+    "vcpus": 6,
+    "system_ram_gb": 55,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 3.40,
+    "raw_price": "$3.40"
+  },
+  {
+    "provider": "azure",
+    "product": "NVIDIA H100",
+    "gpu_count": 1,
+    "vram_gb": 80,
+    "vcpus": 24,
+    "system_ram_gb": 220,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 5.20,
+    "raw_price": "$5.20"
+  },
+  {
+    "provider": "azure",
+    "product": "NVIDIA V100",
+    "gpu_count": 1,
+    "vram_gb": 16,
+    "vcpus": 6,
+    "system_ram_gb": 112,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 2.48,
+    "raw_price": "$2.48"
+  }
+]

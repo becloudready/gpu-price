@@ -1,0 +1,90 @@
+[
+  {
+    "provider": "coreweave",
+    "product": "NVIDIA GB200 NVL72",
+    "gpu_count": null,
+    "vram_gb": 186,
+    "vcpus": 144,
+    "system_ram_gb": 960,
+    "local_storage_tb": 30.72,
+    "price_per_hour_usd": 42.0,
+    "raw_price": "$42.00"
+  },
+  {
+    "provider": "coreweave",
+    "product": "NVIDIA B200",
+    "gpu_count": 8,
+    "vram_gb": 180,
+    "vcpus": 128,
+    "system_ram_gb": 2048,
+    "local_storage_tb": 61.44,
+    "price_per_hour_usd": 68.8,
+    "raw_price": "$68.80"
+  },
+  {
+    "provider": "coreweave",
+    "product": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+    "gpu_count": 8,
+    "vram_gb": 96,
+    "vcpus": 128,
+    "system_ram_gb": 1024,
+    "local_storage_tb": 7.68,
+    "price_per_hour_usd": 20.0,
+    "raw_price": "$20.00"
+  },
+  {
+    "provider": "coreweave",
+    "product": "NVIDIA HGX H200",
+    "gpu_count": 8,
+    "vram_gb": 141,
+    "vcpus": 128,
+    "system_ram_gb": 2048,
+    "local_storage_tb": 61.44,
+    "price_per_hour_usd": 50.44,
+    "raw_price": "$50.44"
+  },
+  {
+    "provider": "coreweave",
+    "product": "NVIDIA GH200",
+    "gpu_count": 1,
+    "vram_gb": 96,
+    "vcpus": 72,
+    "system_ram_gb": 480,
+    "local_storage_tb": 7.68,
+    "price_per_hour_usd": 6.5,
+    "raw_price": "$6.50"
+  },
+  {
+    "provider": "coreweave",
+    "product": "NVIDIA L40",
+    "gpu_count": 8,
+    "vram_gb": 48,
+    "vcpus": 128,
+    "system_ram_gb": 1024,
+    "local_storage_tb": 7.68,
+    "price_per_hour_usd": 10.0,
+    "raw_price": "$10.00"
+  },
+  {
+    "provider": "coreweave",
+    "product": "NVIDIA L40S",
+    "gpu_count": 8,
+    "vram_gb": 48,
+    "vcpus": 128,
+    "system_ram_gb": 1024,
+    "local_storage_tb": 7.68,
+    "price_per_hour_usd": 18.0,
+    "raw_price": "$18.00"
+  },
+  {
+    "provider": "coreweave",
+    "product": "NVIDIA A100",
+    "gpu_count": 8,
+    "vram_gb": 80,
+    "vcpus": 128,
+    "system_ram_gb": 2048,
+    "local_storage_tb": 7.68,
+    "price_per_hour_usd": 21.6,
+    "raw_price": "$21.60"
+  }
+]

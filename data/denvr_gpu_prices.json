@@ -1,0 +1,122 @@
+[
+  {
+    "provider": "denvr",
+    "product": "AMD Mi300X",
+    "gpu_count": 8,
+    "vram_gb": 192.0,
+    "vcpus": 224,
+    "system_ram_gb": 2048,
+    "local_storage_tb": 3.8,
+    "price_per_hour_usd": null
+  },
+  {
+    "provider": "denvr",
+    "product": "Intel Gaudi 2",
+    "gpu_count": 8,
+    "vram_gb": 96.0,
+    "vcpus": 160,
+    "system_ram_gb": 1024,
+    "local_storage_tb": 7.6,
+    "price_per_hour_usd": 1.25
+  },
+  {
+    "provider": "denvr",
+    "product": "Intel Gaudi 3",
+    "gpu_count": 8,
+    "vram_gb": 128.0,
+    "vcpus": 224,
+    "system_ram_gb": 2048,
+    "local_storage_tb": 7.6,
+    "price_per_hour_usd": null
+  },
+  {
+    "provider": "denvr",
+    "product": "NVIDIA A100 PCIe",
+    "gpu_count": 4,
+    "vram_gb": 40.0,
+    "vcpus": 64,
+    "system_ram_gb": 512,
+    "local_storage_tb": 3.8,
+    "price_per_hour_usd": 1.15
+  },
+  {
+    "provider": "denvr",
+    "product": "NVIDIA A100 SXM",
+    "gpu_count": 8,
+    "vram_gb": 80.0,
+    "vcpus": 208,
+    "system_ram_gb": 1024,
+    "local_storage_tb": 3.8,
+    "price_per_hour_usd": 1.3
+  },
+  {
+    "provider": "denvr",
+    "product": "NVIDIA A100 SXM",
+    "gpu_count": 8,
+    "vram_gb": 40.0,
+    "vcpus": 128,
+    "system_ram_gb": 1024,
+    "local_storage_tb": 3.8,
+    "price_per_hour_usd": 1.15
+  },
+  {
+    "provider": "denvr",
+    "product": "NVIDIA A40 PCIe",
+    "gpu_count": 4,
+    "vram_gb": 48.0,
+    "vcpus": 128,
+    "system_ram_gb": 512,
+    "local_storage_tb": 3.8,
+    "price_per_hour_usd": 0.65
+  },
+  {
+    "provider": "denvr",
+    "product": "NVIDIA B200 SXM",
+    "gpu_count": 8,
+    "vram_gb": 180.0,
+    "vcpus": 224,
+    "system_ram_gb": 2048,
+    "local_storage_tb": 3.8,
+    "price_per_hour_usd": null
+  },
+  {
+    "provider": "denvr",
+    "product": "NVIDIA GB200",
+    "gpu_count": 2,
+    "vram_gb": 384.0,
+    "vcpus": 72,
+    "system_ram_gb": 2048,
+    "local_storage_tb": 3.8,
+    "price_per_hour_usd": null
+  },
+  {
+    "provider": "denvr",
+    "product": "NVIDIA GH200",
+    "gpu_count": 1,
+    "vram_gb": 96.0,
+    "vcpus": 72,
+    "system_ram_gb": 480,
+    "local_storage_tb": 3.8,
+    "price_per_hour_usd": 3.87
+  },
+  {
+    "provider": "denvr",
+    "product": "NVIDIA H100 SXM",
+    "gpu_count": 8,
+    "vram_gb": 80.0,
+    "vcpus": 208,
+    "system_ram_gb": 1024,
+    "local_storage_tb": 3.8,
+    "price_per_hour_usd": 2.1
+  },
+  {
+    "provider": "denvr",
+    "product": "NVIDIA H200 SXM",
+    "gpu_count": 8,
+    "vram_gb": 141.0,
+    "vcpus": 208,
+    "system_ram_gb": 2048,
+    "local_storage_tb": 3.8,
+    "price_per_hour_usd": null
+  }
+]

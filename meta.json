@@ -1,0 +1,24 @@
+{
+  "generated_at_utc": "2026-02-10T12:57:37+00:00",
+  "rows": 102,
+  "providers": [
+    "azure",
+    "coreweave",
+    "crusoe",
+    "denvr",
+    "gcp",
+    "lambda",
+    "nebius",
+    "runpod"
+  ],
+  "sources": [
+    "azure_public_prices.json",
+    "coreweave_prices.json",
+    "crusoe_gpu_prices.json",
+    "denvr_gpu_prices.json",
+    "gcp_public_prices.json",
+    "lambda_gpu_prices.json",
+    "nebius_prices.json",
+    "runpod_gpu_prices.json"
+  ]
+}

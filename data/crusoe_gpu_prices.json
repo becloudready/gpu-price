@@ -1,0 +1,242 @@
+[
+  {
+    "provider": "crusoe",
+    "product": "NVIDIA GB200",
+    "gpu_count": null,
+    "vram_gb": 186,
+    "vcpus": null,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": null
+  },
+  {
+    "provider": "crusoe",
+    "product": "NVIDIA B200",
+    "gpu_count": null,
+    "vram_gb": 180,
+    "vcpus": null,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": null
+  },
+  {
+    "provider": "crusoe",
+    "product": "NVIDIA H200",
+    "gpu_count": null,
+    "vram_gb": 141,
+    "vcpus": null,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 4.29
+  },
+  {
+    "provider": "crusoe",
+    "product": "NVIDIA H100",
+    "gpu_count": null,
+    "vram_gb": 80,
+    "vcpus": null,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 3.9
+  },
+  {
+    "provider": "crusoe",
+    "product": "NVIDIA A100",
+    "gpu_count": null,
+    "vram_gb": 80,
+    "vcpus": null,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 1.95
+  },
+  {
+    "provider": "crusoe",
+    "product": "NVIDIA A100",
+    "gpu_count": null,
+    "vram_gb": 80,
+    "vcpus": null,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 1.65
+  },
+  {
+    "provider": "crusoe",
+    "product": "NVIDIA A100",
+    "gpu_count": null,
+    "vram_gb": 40,
+    "vcpus": null,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 1.45
+  },
+  {
+    "provider": "crusoe",
+    "product": "NVIDIA L40S",
+    "gpu_count": null,
+    "vram_gb": 48,
+    "vcpus": null,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 1.0
+  },
+  {
+    "provider": "crusoe",
+    "product": "NVIDIA A40",
+    "gpu_count": null,
+    "vram_gb": 48,
+    "vcpus": null,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 0.9
+  },
+  {
+    "provider": "crusoe",
+    "product": "AMD MI355X",
+    "gpu_count": null,
+    "vram_gb": 288,
+    "vcpus": null,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": null
+  },
+  {
+    "provider": "crusoe",
+    "product": "AMD MI300X",
+    "gpu_count": null,
+    "vram_gb": 192,
+    "vcpus": null,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 3.45
+  },
+  {
+    "provider": "crusoe",
+    "product": "General-purpose",
+    "gpu_count": null,
+    "vram_gb": null,
+    "vcpus": null,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 0.04
+  },
+  {
+    "provider": "crusoe",
+    "product": "Storage-optimized",
+    "gpu_count": null,
+    "vram_gb": null,
+    "vcpus": null,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 0.09
+  },
+  {
+    "provider": "crusoe",
+    "product": "Persistent disks",
+    "gpu_count": null,
+    "vram_gb": null,
+    "vcpus": null,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 0.08
+  },
+  {
+    "provider": "crusoe",
+    "product": "Shared disks",
+    "gpu_count": null,
+    "vram_gb": null,
+    "vcpus": null,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 0.07
+  },
+  {
+    "provider": "crusoe",
+    "product": "Container registry usage",
+    "gpu_count": null,
+    "vram_gb": null,
+    "vcpus": null,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 0.1
+  },
+  {
+    "provider": "crusoe",
+    "product": "Cluster pricing",
+    "gpu_count": null,
+    "vram_gb": null,
+    "vcpus": null,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 0.1
+  },
+  {
+    "provider": "crusoe",
+    "product": "DeepSeek",
+    "gpu_count": null,
+    "vram_gb": null,
+    "vcpus": null,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 1.35
+  },
+  {
+    "provider": "crusoe",
+    "product": "DeepSeek",
+    "gpu_count": null,
+    "vram_gb": null,
+    "vcpus": null,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 0.5
+  },
+  {
+    "provider": "crusoe",
+    "product": "Gemma 3",
+    "gpu_count": null,
+    "vram_gb": null,
+    "vcpus": null,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 0.08
+  },
+  {
+    "provider": "crusoe",
+    "product": "GPT-OSS",
+    "gpu_count": null,
+    "vram_gb": null,
+    "vcpus": null,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 0.15
+  },
+  {
+    "provider": "crusoe",
+    "product": "Kimi-K2",
+    "gpu_count": null,
+    "vram_gb": null,
+    "vcpus": null,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 0.6
+  },
+  {
+    "provider": "crusoe",
+    "product": "Llama",
+    "gpu_count": null,
+    "vram_gb": null,
+    "vcpus": null,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 0.25
+  },
+  {
+    "provider": "crusoe",
+    "product": "Qwen3",
+    "gpu_count": null,
+    "vram_gb": null,
+    "vcpus": null,
+    "system_ram_gb": null,
+    "local_storage_tb": null,
+    "price_per_hour_usd": 0.22
+  }
+]

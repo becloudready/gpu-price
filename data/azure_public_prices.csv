@@ -1,0 +1,4 @@
+provider,product,gpu_count,vram_gb,vcpus,system_ram_gb,local_storage_tb,price_per_hour_usd,raw_price
+azure,NVIDIA A100,1,40,6,55,,3.40,$3.40
+azure,NVIDIA H100,1,80,24,220,,5.20,$5.20
+azure,NVIDIA V100,1,16,6,112,,2.48,$2.48

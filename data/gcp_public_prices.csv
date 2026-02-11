@@ -1,0 +1,4 @@
+provider,product,gpu_count,vram_gb,vcpus,system_ram_gb,local_storage_tb,price_per_hour_usd,raw_price
+gcp,NVIDIA A100,1,40,,,,2.93,$2.93
+gcp,NVIDIA H100,1,80,,,,4.10,$4.10
+gcp,NVIDIA T4,1,16,,,,0.35,$0.35
