@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 
 interface GPUData {
   provider: string;
@@ -13,9 +13,19 @@ interface GPUData {
   raw_price: string;
 }
 
+type SortKey =
+  | "price"
+  | "vram"
+  | "vcpus"
+  | "ram"
+  | "gpu";
+
 export default function GPUPriceMonitor() {
   const [prices, setPrices] = useState<GPUData[]>([]);
   const [search, setSearch] = useState("");
+  const [providerFilter, setProviderFilter] = useState("all");
+  const [sortBy, setSortBy] = useState<SortKey>("price");
+  const [ascending, setAscending] = useState(true);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -28,19 +38,72 @@ export default function GPUPriceMonitor() {
       .catch(() => setLoading(false));
   }, []);
 
-  const filtered = prices.filter((p) =>
-    p.product.toLowerCase().includes(search.toLowerCase())
+  const providers = useMemo(
+    () => ["all", ...new Set(prices.map((p) => p.provider))],
+    [prices]
   );
 
-  const minPrice =
-    prices.length > 0
-      ? Math.min(...prices.map((p) => p.price_per_hour_usd))
-      : Infinity;
+  const minPrice = useMemo(() => {
+    if (!prices.length) return Infinity;
+    return Math.min(...prices.map((p) => p.price_per_hour_usd));
+  }, [prices]);
+
+  const filtered = useMemo(() => {
+    return prices
+      .filter((p) =>
+        p.product.toLowerCase().includes(search.toLowerCase())
+      )
+      .filter((p) =>
+        providerFilter === "all"
+          ? true
+          : p.provider === providerFilter
+      )
+      .sort((a, b) => {
+        let valA = 0;
+        let valB = 0;
+
+        switch (sortBy) {
+          case "price":
+            valA = a.price_per_hour_usd;
+            valB = b.price_per_hour_usd;
+            break;
+          case "vram":
+            valA = a.vram_gb;
+            valB = b.vram_gb;
+            break;
+          case "vcpus":
+            valA = a.vcpus;
+            valB = b.vcpus;
+            break;
+          case "ram":
+            valA = a.system_ram_gb;
+            valB = b.system_ram_gb;
+            break;
+          case "gpu":
+            valA = a.gpu_count;
+            valB = b.gpu_count;
+            break;
+        }
+
+        return ascending ? valA - valB : valB - valA;
+      });
+  }, [prices, search, providerFilter, sortBy, ascending]);
+
+  const toggleSort = (key: SortKey) => {
+    if (sortBy === key) {
+      setAscending(!ascending);
+    } else {
+      setSortBy(key);
+      setAscending(true);
+    }
+  };
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-slate-950 text-white flex items-center justify-center">
-        Loading GPU Prices...
+      <main className="min-h-screen bg-slate-950 flex items-center justify-center text-white">
+        <div className="animate-pulse text-xl">
+          Fetching live GPU deals...
+        </div>
       </main>
     );
   }
@@ -48,102 +111,101 @@ export default function GPUPriceMonitor() {
   return (
     <main className="min-h-screen bg-slate-950 text-slate-50 p-6 md:p-12">
       <div className="max-w-7xl mx-auto">
+
         {/* Header */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
           <div>
-            <h1 className="text-4xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">
+            <h1 className="text-4xl font-extrabold bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent">
               GPU Price Intelligence
             </h1>
-            <p className="text-slate-400 mt-1">
-              CloudDealHunt Live Dashboard
+            <p className="text-slate-400">
+              Compare GPU cloud pricing instantly
             </p>
           </div>
-          <input
-            type="text"
-            placeholder="Search GPU model..."
-            className="bg-slate-900 border border-slate-800 rounded-lg px-4 py-2 w-full md:w-64 focus:ring-2 focus:ring-blue-500 outline-none"
-            onChange={(e) => setSearch(e.target.value)}
+
+          <div className="flex gap-3 w-full md:w-auto">
+            <input
+              type="text"
+              placeholder="Search GPU..."
+              className="bg-slate-900 border border-slate-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
+              onChange={(e) => setSearch(e.target.value)}
+            />
+
+            <select
+              className="bg-slate-900 border border-slate-800 rounded-lg px-4 py-2"
+              value={providerFilter}
+              onChange={(e) => setProviderFilter(e.target.value)}
+            >
+              {providers.map((p, i) => (
+                <option key={i} value={p}>
+                  {p.toUpperCase()}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        {/* KPI */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <Card title="Total Instances" value={prices.length} />
+          <Card
+            title="Active Providers"
+            value={providers.length - 1}
+            highlight="text-blue-400"
+          />
+          <Card
+            title="Starting At"
+            value={
+              minPrice === Infinity
+                ? "$0.00"
+                : `$${minPrice.toFixed(2)}/hr`
+            }
+            highlight="text-emerald-400"
           />
         </div>
 
-        {/* KPI Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-          <div className="bg-slate-900 p-6 rounded-xl border border-slate-800 shadow-sm">
-            <p className="text-slate-500 text-sm uppercase">
-              Total Instances
-            </p>
-            <p className="text-3xl font-bold mt-1">{prices.length}</p>
-          </div>
-
-          <div className="bg-slate-900 p-6 rounded-xl border border-slate-800 shadow-sm">
-            <p className="text-slate-500 text-sm uppercase">
-              Active Providers
-            </p>
-            <p className="text-3xl font-bold mt-1 text-blue-400">
-              {new Set(prices.map((p) => p.provider)).size}
-            </p>
-          </div>
-
-          <div className="bg-slate-900 p-6 rounded-xl border border-emerald-900/30 shadow-sm">
-            <p className="text-emerald-500 text-sm uppercase">Starting At</p>
-            <p className="text-3xl font-bold mt-1 text-emerald-400">
-              $
-              {minPrice === Infinity
-                ? "0.00"
-                : minPrice.toFixed(2)}
-              <span className="text-lg text-slate-500">/hr</span>
-            </p>
-          </div>
-        </div>
-
         {/* Table */}
-        <div className="bg-slate-900 rounded-2xl border border-slate-800 overflow-x-auto">
+        <div className="bg-slate-900 rounded-2xl border border-slate-800 overflow-auto">
           <table className="w-full text-left">
-            <thead>
-              <tr className="bg-slate-800/50 text-slate-400 text-sm uppercase">
+            <thead className="sticky top-0 bg-slate-900 border-b border-slate-800 text-sm uppercase text-slate-400">
+              <tr>
                 <th className="px-6 py-4">Product</th>
                 <th className="px-6 py-4">Provider</th>
-                <th className="px-6 py-4">GPUs</th>
-                <th className="px-6 py-4">VRAM</th>
-                <th className="px-6 py-4">vCPUs</th>
-                <th className="px-6 py-4">System RAM</th>
+                <th className="px-6 py-4 cursor-pointer" onClick={() => toggleSort("gpu")}>GPUs</th>
+                <th className="px-6 py-4 cursor-pointer" onClick={() => toggleSort("vram")}>VRAM</th>
+                <th className="px-6 py-4 cursor-pointer" onClick={() => toggleSort("vcpus")}>vCPUs</th>
+                <th className="px-6 py-4 cursor-pointer" onClick={() => toggleSort("ram")}>System RAM</th>
                 <th className="px-6 py-4">Storage</th>
-                <th className="px-6 py-4 text-right">Hourly Price</th>
+                <th className="px-6 py-4 text-right cursor-pointer" onClick={() => toggleSort("price")}>
+                  Price {sortBy === "price" && (ascending ? "↑" : "↓")}
+                </th>
               </tr>
             </thead>
+
             <tbody className="divide-y divide-slate-800">
-              {filtered.map((item, i) => (
-                <tr
-                  key={i}
-                  className="hover:bg-slate-800/30 transition-all"
-                >
-                  <td className="px-6 py-4 font-semibold text-slate-200">
-                    {item.product}
+              {filtered.length === 0 && (
+                <tr>
+                  <td colSpan={8} className="text-center py-10 text-slate-500">
+                    No GPU matches found.
                   </td>
+                </tr>
+              )}
+
+              {filtered.map((item, i) => (
+                <tr key={i} className="hover:bg-slate-800/40 transition">
+                  <td className="px-6 py-4 font-semibold">{item.product}</td>
 
                   <td className="px-6 py-4">
                     <span className="px-2 py-1 rounded-md bg-blue-500/10 text-blue-400 text-xs font-bold border border-blue-500/20">
-                      {item.provider}
+                      {item.provider.toUpperCase()}
                     </span>
                   </td>
 
-                  <td className="px-6 py-4 text-slate-400">
-                    {item.gpu_count}
-                  </td>
-
-                  <td className="px-6 py-4 text-slate-400">
-                    {item.vram_gb} GB
-                  </td>
-
-                  <td className="px-6 py-4 text-slate-400">
-                    {item.vcpus}
-                  </td>
-
-                  <td className="px-6 py-4 text-slate-400">
-                    {item.system_ram_gb} GB
-                  </td>
-
-                  <td className="px-6 py-4 text-slate-400">
+                  <td className="px-6 py-4">{item.gpu_count}</td>
+                  <td className="px-6 py-4">{item.vram_gb} GB</td>
+                  <td className="px-6 py-4">{item.vcpus}</td>
+                  <td className="px-6 py-4">{item.system_ram_gb} GB</td>
+                  <td className="px-6 py-4">
                     {item.local_storage_tb
                       ? `${item.local_storage_tb} TB`
                       : "—"}
@@ -153,7 +215,7 @@ export default function GPUPriceMonitor() {
                     {item.raw_price}
                     {item.price_per_hour_usd === minPrice && (
                       <span className="ml-2 text-[10px] bg-emerald-500 text-emerald-950 px-1 rounded">
-                        CHEAPEST
+                        BEST DEAL
                       </span>
                     )}
                   </td>
@@ -164,5 +226,24 @@ export default function GPUPriceMonitor() {
         </div>
       </div>
     </main>
+  );
+}
+
+function Card({
+  title,
+  value,
+  highlight,
+}: {
+  title: string;
+  value: number | string;
+  highlight?: string;
+}) {
+  return (
+    <div className="bg-slate-900 p-6 rounded-xl border border-slate-800 shadow-sm">
+      <p className="text-slate-500 text-sm uppercase">{title}</p>
+      <p className={`text-3xl font-bold mt-1 ${highlight || ""}`}>
+        {value}
+      </p>
+    </div>   
   );
 }
