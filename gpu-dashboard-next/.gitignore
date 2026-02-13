@@ -1,8 +1,14 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# ======================
+# Node / NextJS
+# ======================
+node_modules/
+.next/
+out/
+build/
+coverage/
 
-# dependencies
-/node_modules
-/.pnp
+# Yarn / PNP
+.pnp
 .pnp.*
 .yarn/*
 !.yarn/patches
@@ -10,42 +16,52 @@
 !.yarn/releases
 !.yarn/versions
 
-# testing
-/coverage
+# ======================
+# Python
+# ======================
+venv/
+.venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
 
-# next.js
-/.next/
-/out/
+# Python Tool Cache
+.pytest_cache/
+.mypy_cache/
 
-# production
-/build
-
-# misc
-.DS_Store
+# ======================
+# Environment / Secrets
+# ======================
+.env
+.env.*
 *.pem
+*.key
 
-# debug
+# ======================
+# Logs
+# ======================
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
+# ======================
+# OS / Editor
+# ======================
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
 
-# vercel
+# ======================
+# Deployment
+# ======================
 .vercel
 
-# typescript
+# ======================
+# Typescript
+# ======================
 *.tsbuildinfo
 next-env.d.ts
-
-# Python
-venv/
-.venv/
-__pycache__/
-*.pyc
-
-# Local Data (optional - if you don't want to push the raw json files)
-*.json
-!package.json
