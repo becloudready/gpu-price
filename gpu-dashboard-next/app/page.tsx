@@ -1,5 +1,8 @@
 "use client";
+
 import React, { useState, useEffect, useMemo } from "react";
+import PriceVsVRAMChart from "@/components/PriceVsVRAMChart";
+
 
 interface GPUData {
   provider: string;
@@ -13,12 +16,7 @@ interface GPUData {
   raw_price: string;
 }
 
-type SortKey =
-  | "price"
-  | "vram"
-  | "vcpus"
-  | "ram"
-  | "gpu";
+type SortKey = "price" | "vram" | "vcpus" | "ram" | "gpu";
 
 export default function GPUPriceMonitor() {
   const [prices, setPrices] = useState<GPUData[]>([]);
@@ -28,70 +26,88 @@ export default function GPUPriceMonitor() {
   const [ascending, setAscending] = useState(true);
   const [loading, setLoading] = useState(true);
 
+  // ✅ SAFE FETCH
   useEffect(() => {
     fetch("http://127.0.0.1:5000/prices")
       .then((res) => res.json())
       .then((data) => {
-        setPrices(data);
+        if (Array.isArray(data)) {
+          setPrices(data);
+        } else {
+          console.error("API did not return array:", data);
+          setPrices([]);
+        }
         setLoading(false);
       })
-      .catch(() => setLoading(false));
+      .catch((err) => {
+        console.error("Fetch error:", err);
+        setPrices([]);
+        setLoading(false);
+      });
   }, []);
 
-  const providers = useMemo(
-    () => ["all", ...new Set(prices.map((p) => p.provider))],
-    [prices]
-  );
+  const providers = useMemo(() => {
+    if (!prices.length) return ["all"];
+    return ["all", ...Array.from(new Set(prices.map((p) => p.provider)))];
+  }, [prices]);
 
   const minPrice = useMemo(() => {
-    if (!prices.length) return Infinity;
+    if (!prices.length) return 0;
     return Math.min(...prices.map((p) => p.price_per_hour_usd));
   }, [prices]);
 
   const filtered = useMemo(() => {
-    return prices
-      .filter((p) =>
-        p.product.toLowerCase().includes(search.toLowerCase())
-      )
-      .filter((p) =>
-        providerFilter === "all"
-          ? true
-          : p.provider === providerFilter
-      )
-      .sort((a, b) => {
-        let valA = 0;
-        let valB = 0;
+    let result = [...prices]; // prevent mutation
 
-        switch (sortBy) {
-          case "price":
-            valA = a.price_per_hour_usd;
-            valB = b.price_per_hour_usd;
-            break;
-          case "vram":
-            valA = a.vram_gb;
-            valB = b.vram_gb;
-            break;
-          case "vcpus":
-            valA = a.vcpus;
-            valB = b.vcpus;
-            break;
-          case "ram":
-            valA = a.system_ram_gb;
-            valB = b.system_ram_gb;
-            break;
-          case "gpu":
-            valA = a.gpu_count;
-            valB = b.gpu_count;
-            break;
-        }
+    // Search filter (safe check)
+    if (search.trim()) {
+      result = result.filter((p) =>
+        p.product?.toLowerCase().includes(search.toLowerCase())
+      );
+    }
 
-        return ascending ? valA - valB : valB - valA;
-      });
+    // Provider filter
+    if (providerFilter !== "all") {
+      result = result.filter((p) => p.provider === providerFilter);
+    }
+
+    // Sorting
+    result.sort((a, b) => {
+      let valA = 0;
+      let valB = 0;
+
+      switch (sortBy) {
+        case "price":
+          valA = a.price_per_hour_usd;
+          valB = b.price_per_hour_usd;
+          break;
+        case "vram":
+          valA = a.vram_gb;
+          valB = b.vram_gb;
+          break;
+        case "vcpus":
+          valA = a.vcpus;
+          valB = b.vcpus;
+          break;
+        case "ram":
+          valA = a.system_ram_gb;
+          valB = b.system_ram_gb;
+          break;
+        case "gpu":
+          valA = a.gpu_count;
+          valB = b.gpu_count;
+          break;
+      }
+
+      return ascending ? valA - valB : valB - valA;
+    });
+
+    return result;
   }, [prices, search, providerFilter, sortBy, ascending]);
 
   const toggleSort = (key: SortKey) => {
     if (sortBy === key) {
-      setAscending(!ascending);
+      setAscending((prev) => !prev);
     } else {
       setSortBy(key);
       setAscending(true);
@@ -136,8 +152,8 @@ export default function GPUPriceMonitor() {
               value={providerFilter}
               onChange={(e) => setProviderFilter(e.target.value)}
             >
-              {providers.map((p, i) => (
-                <option key={i} value={p}>
+              {providers.map((p) => (
+                <option key={p} value={p}>
                   {p.toUpperCase()}
                 </option>
               ))}
@@ -155,15 +171,12 @@ export default function GPUPriceMonitor() {
           />
           <Card
             title="Starting At"
-            value={
-              minPrice === Infinity
-                ? "$0.00"
-                : `$${minPrice.toFixed(2)}/hr`
-            }
+            value={`$${minPrice.toFixed(2)}/hr`}
             highlight="text-emerald-400"
           />
         </div>
-
+        {/* Chart */}
+        
         {/* Table */}
         <div className="bg-slate-900 rounded-2xl border border-slate-800 overflow-auto">
           <table className="w-full text-left">
@@ -206,9 +219,8 @@ export default function GPUPriceMonitor() {
                   <td className="px-6 py-4">{item.vcpus}</td>
                   <td className="px-6 py-4">{item.system_ram_gb} GB</td>
                   <td className="px-6 py-4">
-                    {item.local_storage_tb
-                      ? `${item.local_storage_tb} TB`
-                      : "—"}
+                    {item.local_storage_tb ?? "—"}
+                    {item.local_storage_tb && " TB"}
                   </td>
 
                   <td className="px-6 py-4 text-right font-mono text-emerald-400 font-bold">
@@ -244,6 +256,6 @@ function Card({
       <p className={`text-3xl font-bold mt-1 ${highlight || ""}`}>
         {value}
       </p>
-    </div>   
+    </div>
   );
 }
