@@ -176,7 +176,17 @@ export default function GPUPriceMonitor() {
           />
         </div>
         {/* Chart */}
-        
+        {/* Chart Section */}
+<div className="mb-10">
+  {filtered.length > 0 ? (
+    <PriceVsVRAMChart data={filtered} />
+  ) : (
+    <div className="text-slate-500 text-center py-10">
+      No chart data available.
+    </div>
+  )}
+</div>
+git add <div className=""></div>
         {/* Table */}
         <div className="bg-slate-900 rounded-2xl border border-slate-800 overflow-auto">
           <table className="w-full text-left">
