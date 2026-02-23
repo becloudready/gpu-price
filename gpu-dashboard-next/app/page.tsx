@@ -175,8 +175,6 @@ export default function GPUPriceMonitor() {
             highlight="text-emerald-400"
           />
         </div>
-        {/* Chart */}
-        {/* Chart Section */}
 <div className="mb-10">
   {filtered.length > 0 ? (
     <PriceVsVRAMChart data={filtered} />
