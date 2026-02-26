@@ -1,5 +1,6 @@
 "use client";
 
+import React, { useState, useMemo } from "react";
 import {
   BarChart,
   Bar,
@@ -9,6 +10,11 @@ import {
   Tooltip,
   ResponsiveContainer,
   Cell,
+  ScatterChart,
+  Scatter,
+  PieChart,
+  Pie,
+  Legend,
 } from "recharts";
 
 interface GPUData {
@@ -28,93 +34,143 @@ export default function PriceVsVRAMChart({
 }: {
   data: GPUData[];
 }) {
+  const [chartType, setChartType] = useState("bar");
+
+  const sortedByVRAM = useMemo(() => {
+    return [...data].sort((a, b) => a.vram_gb - b.vram_gb);
+  }, [data]);
+
+  const minPrice = useMemo(() => {
+    if (!data.length) return 0;
+    return Math.min(...data.map((d) => d.price_per_hour_usd));
+  }, [data]);
+
+  const marketDistribution = useMemo(() => {
+    const map: Record<string, number> = {};
+
+    for (const gpu of data) {
+      map[gpu.provider] = (map[gpu.provider] || 0) + 1;
+    }
+
+    return Object.keys(map).map((provider) => ({
+      provider,
+      count: map[provider],
+    }));
+  }, [data]);
+
+  const pieColors = [
+    "#3b82f6",
+    "#10b981",
+    "#f59e0b",
+    "#ef4444",
+    "#8b5cf6",
+    "#06b6d4",
+    "#f43f5e",
+  ];
+
   if (!data || data.length === 0) {
     return (
-      <div className="bg-slate-900 p-6 rounded-2xl border border-slate-800 mb-8 text-center text-slate-400">
+      <div className="bg-slate-900 p-6 rounded-2xl border border-slate-800 text-center text-slate-400">
         No chart data available
       </div>
     );
   }
 
-  // Sort by VRAM ascending
-  const chartData = [...data].sort(
-    (a, b) => a.vram_gb - b.vram_gb
-  );
-
-  const minPrice = Math.min(
-    ...chartData.map((d) => d.price_per_hour_usd)
-  );
-
   return (
     <div className="bg-slate-900 p-8 rounded-2xl border border-slate-800 mb-10">
-      <h2 className="text-2xl font-bold mb-6 text-white">
-        Price vs VRAM
-      </h2>
+      
+      {/* Header */}
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold text-white">
+          GPU Market Analytics
+        </h2>
 
-      <div className="w-full h-[450px] md:h-[550px]">
+        <select
+          value={chartType}
+          onChange={(e) => setChartType(e.target.value)}
+          className="bg-slate-800 border border-slate-700 px-4 py-2 rounded-lg text-sm"
+        >
+          <option value="bar">Price vs VRAM (Column)</option>
+          <option value="scatter">Price vs VRAM (Scatter)</option>
+          <option value="pie">Market Distribution</option>
+        </select>
+      </div>
+
+      {/* Chart Area */}
+      <div className="w-full h-[500px]">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart
-            data={chartData}
-            margin={{ top: 10, right: 20, left: 10, bottom: 40 }}
-          >
-            <CartesianGrid stroke="#1e293b" vertical={false} />
 
-            <XAxis
-              dataKey="product"
-              stroke="#94a3b8"
-              tick={{ fontSize: 11 }}
-              angle={-25}
-              textAnchor="end"
-              height={70}
-            />
+          {/* COLUMN CHART */}
+          {chartType === "bar" && (
+            <BarChart data={sortedByVRAM}>
+              <CartesianGrid stroke="#1e293b" vertical={false} />
+              <XAxis
+                dataKey="product"
+                stroke="#94a3b8"
+                angle={-25}
+                textAnchor="end"
+                height={70}
+              />
+              <YAxis stroke="#94a3b8" unit="$" />
+              <Tooltip />
+              <Bar dataKey="price_per_hour_usd" radius={[8, 8, 0, 0]}>
+                {sortedByVRAM.map((entry, index) => (
+                  <Cell
+                    key={index}
+                    fill={
+                      entry.price_per_hour_usd === minPrice
+                        ? "#22c55e"
+                        : "#3b82f6"
+                    }
+                  />
+                ))}
+              </Bar>
+            </BarChart>
+          )}
 
-            <YAxis
-              stroke="#94a3b8"
-              tick={{ fontSize: 12 }}
-              unit=" $"
-            />
+          {/* SCATTER CHART */}
+          {chartType === "scatter" && (
+            <ScatterChart>
+              <CartesianGrid stroke="#1e293b" />
+              <XAxis
+                type="number"
+                dataKey="vram_gb"
+                unit="GB"
+                stroke="#94a3b8"
+              />
+              <YAxis
+                type="number"
+                dataKey="price_per_hour_usd"
+                unit="$"
+                stroke="#94a3b8"
+              />
+              <Tooltip />
+              <Scatter data={sortedByVRAM} fill="#3b82f6" />
+            </ScatterChart>
+          )}
 
-            <Tooltip
-              cursor={{ fill: "rgba(255,255,255,0.05)" }}
-              content={({ payload }) => {
-                if (!payload || !payload.length) return null;
-                const gpu = payload[0].payload;
+          {/* PIE CHART */}
+          {chartType === "pie" && (
+            <PieChart>
+              <Tooltip />
+              <Legend />
+              <Pie
+                data={marketDistribution}
+                dataKey="count"
+                nameKey="provider"
+                outerRadius={150}
+                label
+              >
+                {marketDistribution.map((_, index) => (
+                  <Cell
+                    key={index}
+                    fill={pieColors[index % pieColors.length]}
+                  />
+                ))}
+              </Pie>
+            </PieChart>
+          )}
 
-                return (
-                  <div className="bg-slate-800 p-4 rounded-lg border border-slate-700 text-sm shadow-lg">
-                    <p className="font-bold text-white">
-                      {gpu.product}
-                    </p>
-                    <p className="text-slate-400">
-                      Provider: {gpu.provider}
-                    </p>
-                    <p className="text-slate-400">
-                      VRAM: {gpu.vram_gb} GB
-                    </p>
-                    <p className="text-emerald-400 font-semibold">
-                      {gpu.raw_price}/hr
-                    </p>
-                  </div>
-                );
-              }}
-            />
-
-            <Bar
-              dataKey="price_per_hour_usd"
-              radius={[8, 8, 0, 0]}
-            >
-              {chartData.map((entry, index) => (
-                <Cell
-                  key={`cell-${index}`}
-                  fill={
-                    entry.price_per_hour_usd === minPrice
-                      ? "#22c55e" // highlight cheapest
-                      : "#3b82f6"
-                  }
-                />
-              ))}
-            </Bar>
-          </BarChart>
         </ResponsiveContainer>
       </div>
     </div>

@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useState, useEffect, useMemo } from "react";
+import Image from "next/image";
 import PriceVsVRAMChart from "@/components/PriceVsVRAMChart";
-
+import AdvancedCharts from "@/components/AdvancedCharts";
 
 interface GPUData {
   provider: string;
@@ -16,122 +17,110 @@ interface GPUData {
   raw_price: string;
 }
 
-type SortKey = "price" | "vram" | "vcpus" | "ram" | "gpu";
-
 export default function GPUPriceMonitor() {
   const [prices, setPrices] = useState<GPUData[]>([]);
   const [search, setSearch] = useState("");
   const [providerFilter, setProviderFilter] = useState("all");
-  const [sortBy, setSortBy] = useState<SortKey>("price");
-  const [ascending, setAscending] = useState(true);
+  const [compareList, setCompareList] = useState<GPUData[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // ✅ SAFE FETCH
+  // 🧮 Calculator State
+  const [hoursPerDay, setHoursPerDay] = useState(8);
+  const [daysPerMonth, setDaysPerMonth] = useState(30);
+
+  const normalize = (value?: string) =>
+    value ? value.toUpperCase().trim() : "";
+
+  const providerLogos: Record<string, string> = {
+    AZURE: "/providers/azure.png",
+    COREWEAVE: "/providers/coreweave.png",
+    CRUSOE: "/providers/crusoe.png",
+    DENVR: "/providers/denvr.png",
+    GCP: "/providers/gcp.png",
+    LAMBDA: "/providers/lambda.png",
+    NEBIUS: "/providers/nebius.png",
+    RUNPOD: "/providers/runpod.png",
+  };
+
   useEffect(() => {
-    fetch("http://127.0.0.1:5000/prices")
-      .then((res) => res.json())
-      .then((data) => {
-        if (Array.isArray(data)) {
-          setPrices(data);
-        } else {
-          console.error("API did not return array:", data);
-          setPrices([]);
-        }
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Fetch error:", err);
+    const fetchPrices = async () => {
+      try {
+        const res = await fetch("http://127.0.0.1:5000/prices");
+        const data = await res.json();
+        setPrices(Array.isArray(data) ? data : []);
+      } catch {
         setPrices([]);
+      } finally {
         setLoading(false);
-      });
+      }
+    };
+    fetchPrices();
   }, []);
 
   const providers = useMemo(() => {
     if (!prices.length) return ["all"];
-    return ["all", ...Array.from(new Set(prices.map((p) => p.provider)))];
-  }, [prices]);
-
-  const minPrice = useMemo(() => {
-    if (!prices.length) return 0;
-    return Math.min(...prices.map((p) => p.price_per_hour_usd));
+    return [
+      "all",
+      ...Array.from(new Set(prices.map((p) => normalize(p.provider)))),
+    ];
   }, [prices]);
 
   const filtered = useMemo(() => {
-    let result = [...prices]; // prevent mutation
+    let result = [...prices];
 
-    // Search filter (safe check)
     if (search.trim()) {
       result = result.filter((p) =>
-        p.product?.toLowerCase().includes(search.toLowerCase())
+        p.product.toLowerCase().includes(search.toLowerCase())
       );
     }
 
-    // Provider filter
     if (providerFilter !== "all") {
-      result = result.filter((p) => p.provider === providerFilter);
+      result = result.filter(
+        (p) => normalize(p.provider) === providerFilter
+      );
     }
 
-    // Sorting
-    result.sort((a, b) => {
-      let valA = 0;
-      let valB = 0;
-
-      switch (sortBy) {
-        case "price":
-          valA = a.price_per_hour_usd;
-          valB = b.price_per_hour_usd;
-          break;
-        case "vram":
-          valA = a.vram_gb;
-          valB = b.vram_gb;
-          break;
-        case "vcpus":
-          valA = a.vcpus;
-          valB = b.vcpus;
-          break;
-        case "ram":
-          valA = a.system_ram_gb;
-          valB = b.system_ram_gb;
-          break;
-        case "gpu":
-          valA = a.gpu_count;
-          valB = b.gpu_count;
-          break;
-      }
-
-      return ascending ? valA - valB : valB - valA;
-    });
-
     return result;
-  }, [prices, search, providerFilter, sortBy, ascending]);
+  }, [prices, search, providerFilter]);
 
-  const toggleSort = (key: SortKey) => {
-    if (sortBy === key) {
-      setAscending((prev) => !prev);
-    } else {
-      setSortBy(key);
-      setAscending(true);
+  const toggleCompare = (gpu: GPUData) => {
+    const exists = compareList.some(
+      (item) =>
+        item.product === gpu.product &&
+        item.provider === gpu.provider
+    );
+
+    if (exists) {
+      setCompareList((prev) =>
+        prev.filter(
+          (item) =>
+            !(
+              item.product === gpu.product &&
+              item.provider === gpu.provider
+            )
+        )
+      );
+    } else if (compareList.length < 3) {
+      setCompareList((prev) => [...prev, gpu]);
     }
   };
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-slate-950 flex items-center justify-center text-white">
-        <div className="animate-pulse text-xl">
-          Fetching live GPU deals...
-        </div>
+      <main className="min-h-screen flex items-center justify-center bg-slate-950 text-white">
+        Loading...
       </main>
     );
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-50 p-6 md:p-12">
-      <div className="max-w-7xl mx-auto">
+    <main className="min-h-screen bg-slate-950 text-slate-50 py-10 px-4">
+      <div className="max-w-7xl mx-auto space-y-10">
 
-        {/* Header */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+        {/* HEADER */}
+        <div className="flex flex-col md:flex-row md:justify-between gap-6">
           <div>
-            <h1 className="text-4xl font-extrabold bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent">
+            <h1 className="text-4xl font-bold">
               GPU Price Intelligence
             </h1>
             <p className="text-slate-400">
@@ -139,14 +128,13 @@ export default function GPUPriceMonitor() {
             </p>
           </div>
 
-          <div className="flex gap-3 w-full md:w-auto">
+          <div className="flex flex-col sm:flex-row gap-3">
             <input
               type="text"
               placeholder="Search GPU..."
-              className="bg-slate-900 border border-slate-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
+              className="bg-slate-900 border border-slate-800 rounded-lg px-4 py-2"
               onChange={(e) => setSearch(e.target.value)}
             />
-
             <select
               className="bg-slate-900 border border-slate-800 rounded-lg px-4 py-2"
               value={providerFilter}
@@ -161,109 +149,164 @@ export default function GPUPriceMonitor() {
           </div>
         </div>
 
-        {/* KPI */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <Card title="Total Instances" value={prices.length} />
-          <Card
-            title="Active Providers"
-            value={providers.length - 1}
-            highlight="text-blue-400"
-          />
-          <Card
-            title="Starting At"
-            value={`$${minPrice.toFixed(2)}/hr`}
-            highlight="text-emerald-400"
-          />
+        {/* CHART */}
+        <div className="bg-slate-900 p-6 rounded-2xl border border-slate-800 min-h-[400px]">
+          {filtered.length > 0 ? (
+            <PriceVsVRAMChart data={filtered} />
+          ) : (
+            <div className="text-center text-slate-500">
+              No chart data available.
+            </div>
+          )}
         </div>
-<div className="mb-10">
-  {filtered.length > 0 ? (
-    <PriceVsVRAMChart data={filtered} />
-  ) : (
-    <div className="text-slate-500 text-center py-10">
-      No chart data available.
-    </div>
-  )}
-</div>
-git add <div className=""></div>
-        {/* Table */}
-        <div className="bg-slate-900 rounded-2xl border border-slate-800 overflow-auto">
-          <table className="w-full text-left">
-            <thead className="sticky top-0 bg-slate-900 border-b border-slate-800 text-sm uppercase text-slate-400">
+        {/* ADVANCED CHARTS */}
+
+
+        {/* 🧮 CALCULATOR PANEL */}
+        {compareList.length > 0 && (
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-6">
+            <h2 className="text-xl font-bold">
+              Cost Calculator
+            </h2>
+
+            <div className="flex flex-col md:flex-row gap-4">
+              <div>
+                <label className="text-sm text-slate-400">
+                  Hours per Day
+                </label>
+                <input
+                  type="number"
+                  value={hoursPerDay}
+                  onChange={(e) =>
+                    setHoursPerDay(Number(e.target.value))
+                  }
+                  className="mt-1 bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 w-32"
+                />
+              </div>
+
+              <div>
+                <label className="text-sm text-slate-400">
+                  Days per Month
+                </label>
+                <input
+                  type="number"
+                  value={daysPerMonth}
+                  onChange={(e) =>
+                    setDaysPerMonth(Number(e.target.value))
+                  }
+                  className="mt-1 bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 w-32"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {compareList.map((gpu) => {
+                const hourly = gpu.price_per_hour_usd;
+                const daily = hourly * hoursPerDay;
+                const monthly = daily * daysPerMonth;
+
+                return (
+                  <div
+                    key={`${gpu.provider}-${gpu.product}`}
+                    className="bg-slate-800 rounded-xl p-5 space-y-3"
+                  >
+                    <h3 className="font-semibold text-lg">
+                      {gpu.provider} - {gpu.product}
+                    </h3>
+
+                    <p>Hourly: ${hourly.toFixed(2)}</p>
+                    <p>Daily: ${daily.toFixed(2)}</p>
+                    <p className="text-emerald-400 font-bold text-lg">
+                      Monthly: ${monthly.toFixed(2)}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* TABLE */}
+        <div className="bg-slate-900 rounded-2xl border border-slate-800 overflow-x-auto">
+          <table className="min-w-full text-sm">
+            <thead className="border-b border-slate-800 text-xs uppercase text-slate-400">
               <tr>
-                <th className="px-6 py-4">Product</th>
-                <th className="px-6 py-4">Provider</th>
-                <th className="px-6 py-4 cursor-pointer" onClick={() => toggleSort("gpu")}>GPUs</th>
-                <th className="px-6 py-4 cursor-pointer" onClick={() => toggleSort("vram")}>VRAM</th>
-                <th className="px-6 py-4 cursor-pointer" onClick={() => toggleSort("vcpus")}>vCPUs</th>
-                <th className="px-6 py-4 cursor-pointer" onClick={() => toggleSort("ram")}>System RAM</th>
-                <th className="px-6 py-4">Storage</th>
-                <th className="px-6 py-4 text-right cursor-pointer" onClick={() => toggleSort("price")}>
-                  Price {sortBy === "price" && (ascending ? "↑" : "↓")}
-                </th>
+                <th className="px-6 py-4 text-left">Product</th>
+                <th className="px-6 py-4 text-left">Provider</th>
+                <th className="px-6 py-4 text-center">GPUs</th>
+                <th className="px-6 py-4 text-center">VRAM</th>
+                <th className="px-6 py-4 text-center">vCPUs</th>
+                <th className="px-6 py-4 text-center">RAM</th>
+                <th className="px-6 py-4 text-center">Storage</th>
+                <th className="px-6 py-4 text-right">Price</th>
+                <th className="px-6 py-4 text-center">Compare</th>
               </tr>
             </thead>
 
             <tbody className="divide-y divide-slate-800">
-              {filtered.length === 0 && (
-                <tr>
-                  <td colSpan={8} className="text-center py-10 text-slate-500">
-                    No GPU matches found.
-                  </td>
-                </tr>
-              )}
+              {filtered.map((item, i) => {
+                const normalized = normalize(item.provider);
+                const logo =
+                  providerLogos[
+                    Object.keys(providerLogos).find((key) =>
+                      normalized.includes(key)
+                    ) || ""
+                  ];
 
-              {filtered.map((item, i) => (
-                <tr key={i} className="hover:bg-slate-800/40 transition">
-                  <td className="px-6 py-4 font-semibold">{item.product}</td>
-
-                  <td className="px-6 py-4">
-                    <span className="px-2 py-1 rounded-md bg-blue-500/10 text-blue-400 text-xs font-bold border border-blue-500/20">
-                      {item.provider.toUpperCase()}
-                    </span>
-                  </td>
-
-                  <td className="px-6 py-4">{item.gpu_count}</td>
-                  <td className="px-6 py-4">{item.vram_gb} GB</td>
-                  <td className="px-6 py-4">{item.vcpus}</td>
-                  <td className="px-6 py-4">{item.system_ram_gb} GB</td>
-                  <td className="px-6 py-4">
-                    {item.local_storage_tb ?? "—"}
-                    {item.local_storage_tb && " TB"}
-                  </td>
-
-                  <td className="px-6 py-4 text-right font-mono text-emerald-400 font-bold">
-                    {item.raw_price}
-                    {item.price_per_hour_usd === minPrice && (
-                      <span className="ml-2 text-[10px] bg-emerald-500 text-emerald-950 px-1 rounded">
-                        BEST DEAL
-                      </span>
-                    )}
-                  </td>
-                </tr>
-              ))}
+                return (
+                  <tr key={i} className="hover:bg-slate-800/40">
+                    <td className="px-6 py-4">{item.product}</td>
+                    <td className="px-6 py-4 flex items-center gap-2">
+                      {logo && (
+                        <Image
+                          src={logo}
+                          alt={normalized}
+                          width={24}
+                          height={24}
+                        />
+                      )}
+                      {item.provider}
+                    </td>
+                    <td className="px-6 py-4 text-center">{item.gpu_count}</td>
+                    <td className="px-6 py-4 text-center">{item.vram_gb} GB</td>
+                    <td className="px-6 py-4 text-center">{item.vcpus}</td>
+                    <td className="px-6 py-4 text-center">
+                      {item.system_ram_gb} GB
+                    </td>
+                    <td className="px-6 py-4 text-center">
+                      {item.local_storage_tb ?? "—"}
+                    </td>
+                    <td className="px-6 py-4 text-right text-emerald-400 font-bold">
+                      {item.raw_price}
+                    </td>
+                    <td className="px-6 py-4 text-center">
+                      <input
+                        type="checkbox"
+                        checked={compareList.some(
+                          (c) =>
+                            c.product === item.product &&
+                            c.provider === item.provider
+                        )}
+                        onChange={() => toggleCompare(item)}
+                        disabled={
+                          !compareList.some(
+                            (c) =>
+                              c.product === item.product &&
+                              c.provider === item.provider
+                          ) && compareList.length >= 3
+                        }
+                        className="w-4 h-4 accent-emerald-500"
+                      />
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
+
       </div>
     </main>
-  );
-}
-
-function Card({
-  title,
-  value,
-  highlight,
-}: {
-  title: string;
-  value: number | string;
-  highlight?: string;
-}) {
-  return (
-    <div className="bg-slate-900 p-6 rounded-xl border border-slate-800 shadow-sm">
-      <p className="text-slate-500 text-sm uppercase">{title}</p>
-      <p className={`text-3xl font-bold mt-1 ${highlight || ""}`}>
-        {value}
-      </p>
-    </div>
+    
   );
 }

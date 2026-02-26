@@ -6,6 +6,7 @@ node_modules/
 out/
 build/
 coverage/
+dist/
 
 # Yarn / PNP
 .pnp
@@ -22,10 +23,14 @@ coverage/
 venv/
 .venv/
 env/
+ENV/
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
+
+# If backend is outside current folder
+../venv/
 
 # Python Tool Cache
 .pytest_cache/
@@ -46,6 +51,7 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
+*.log
 
 # ======================
 # OS / Editor
@@ -65,3 +71,9 @@ Thumbs.db
 # ======================
 *.tsbuildinfo
 next-env.d.ts
+
+# ======================
+# Misc
+# ======================
+*.swp
+*.swo
