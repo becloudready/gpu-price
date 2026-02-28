@@ -34,3 +34,103 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+# 🚀 GPU Price Intelligence Dashboard
+
+A full-stack GPU cloud pricing comparison platform built using **Next.js, React, TypeScript, Tailwind CSS, Recharts, and Flask API**.
+
+---
+
+## 📅 Daily Development Report – 27 Feb 2026
+
+### 🔗 Backend Integration
+- Connected frontend to Flask API (`/prices`)
+- Implemented safe data fetching using `useEffect`
+- Added loading state handling
+- Ensured array validation before rendering
+
+---
+
+### 🔍 Search & Filtering System
+- Implemented case-insensitive product search
+- Added provider-based filtering
+- Used `useMemo` for optimized filtering
+- Dynamically generated provider dropdown
+
+---
+
+### 📊 Chart Integration
+- Integrated `PriceVsVRAMChart`
+- Displayed VRAM vs Price visualization
+- Added conditional rendering fallback
+- Ensured responsive container layout
+
+---
+
+### 🧮 GPU Cost Calculator
+- Users can compare up to 3 GPUs
+- Added inputs:
+  - Hours per Day
+  - Days per Month
+- Implemented dynamic calculations:
+
+Daily Cost = Hourly Price × Hours per Day  
+Monthly Cost = Daily Cost × Days per Month  
+
+- Real-time updates on input change
+
+---
+
+### 🖼 Dynamic Provider Logo System
+- Normalized provider names
+- Mapped provider logos from `/public/providers`
+- Implemented safe dynamic rendering
+- Used Next.js `<Image />` component
+
+---
+
+### 📋 Data Table Implementation
+- Responsive GPU pricing table
+- Hover styling and row separation
+- Conditional storage display
+- Highlighted price formatting
+- Compare selection checkbox with limit logic
+
+---
+
+## ⚡ Performance Optimizations
+- Used `useMemo` for:
+  - Filtered dataset
+  - Provider list generation
+- Avoided unnecessary re-renders
+- Implemented controlled inputs
+
+---
+
+## 🧠 Technical Concepts Applied
+- React Hooks (useState, useEffect, useMemo)
+- API Integration
+- Conditional Rendering
+- State Management
+- Data Normalization
+- Responsive UI Design
+- Dynamic Component Rendering
+
+---
+
+## 📌 Project Status
+✅ API integration complete  
+✅ Chart visualization working  
+✅ Search & filtering operational  
+✅ Cost calculator implemented  
+✅ Compare feature functional  
+✅ Responsive UI structured  
+
+---
+
+### 📈 Next Improvements
+- Sorting functionality
+- Export to CSV
+- Price trend tracking
+- Deployment to Vercel
+- Authentication system
