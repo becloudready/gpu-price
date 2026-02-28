@@ -3,7 +3,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import Image from "next/image";
 import PriceVsVRAMChart from "@/components/PriceVsVRAMChart";
-import AdvancedCharts from "@/components/AdvancedCharts";
 
 interface GPUData {
   provider: string;
