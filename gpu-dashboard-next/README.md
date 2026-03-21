@@ -137,3 +137,116 @@ Monthly Cost = Daily Cost × Days per Month
 ## 🔥 Latest Update
 - Improved UI and added comparison feature
 added sort button and arranged the table above charts
+
+⚙️ FULL INSTALLATION FLOW (FROM ZERO)
+1️⃣ Install Required Software
+Install Node.js (LTS version)
+Install Python (3.8+)
+Install Git
+
+Verify:
+
+node -v
+npm -v
+python --version
+git --version
+🖥️ BACKEND SETUP (Flask API)
+2️⃣ Create Backend Folder
+mkdir backend
+cd backend
+3️⃣ Create Virtual Environment
+python -m venv venv
+
+Activate:
+
+# Windows
+venv\Scripts\activate
+
+# Mac/Linux
+source venv/bin/activate
+4️⃣ Install Backend Dependencies
+pip install flask flask-cors pandas requests
+5️⃣ Create Flask API (app.py)
+from flask import Flask, jsonify
+from flask_cors import CORS
+
+app = Flask(__name__)
+CORS(app)
+
+@app.route("/prices", methods=["GET"])
+def get_prices():
+    data = [
+        {
+            "provider": "AWS",
+            "product": "A100",
+            "vram_gb": 40,
+            "price_per_hour": 3.5
+        },
+        {
+            "provider": "GCP",
+            "product": "T4",
+            "vram_gb": 16,
+            "price_per_hour": 0.8
+        }
+    ]
+    return jsonify(data)
+
+if __name__ == "__main__":
+    app.run(debug=True)
+6️⃣ Run Backend Server
+python app.py
+
+👉 Runs on:
+
+http://127.0.0.1:5000/prices
+🌐 FRONTEND SETUP (Next.js)
+7️⃣ Create Next.js App
+npx create-next-app@latest gpu-dashboard
+cd gpu-dashboard
+
+Select:
+
+TypeScript → Yes
+Tailwind → Yes
+App Router → Yes
+8️⃣ Install Extra Libraries
+npm install recharts axios
+9️⃣ Run Frontend
+npm run dev
+
+👉 Open:
+
+http://localhost:3000
+🔗 CONNECT FRONTEND TO BACKEND
+🔟 Update app/page.tsx
+
+Replace fetch logic:
+
+useEffect(() => {
+  const fetchData = async () => {
+    try {
+      const res = await fetch("http://127.0.0.1:5000/prices");
+      const data = await res.json();
+      setGpuData(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchData();
+}, []);
+▶️ RUN COMPLETE PROJECT
+1️⃣ Start Backend
+cd backend
+venv\Scripts\activate
+python app.py
+2️⃣ Start Frontend (New Terminal)
+cd gpu-dashboard
+npm run dev
+✅ FINAL RESULT
+
+Open:
+
+http://localhost:3000
