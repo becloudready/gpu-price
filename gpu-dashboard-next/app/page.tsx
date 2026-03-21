@@ -23,6 +23,9 @@ export default function GPUPriceMonitor() {
   const [compareList, setCompareList] = useState<GPUData[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // 🆕 SORT STATE
+  const [priceOrder, setPriceOrder] = useState("asc");
+
   // 🧮 Calculator State
   const [hoursPerDay, setHoursPerDay] = useState(8);
   const [daysPerMonth, setDaysPerMonth] = useState(30);
@@ -67,20 +70,32 @@ export default function GPUPriceMonitor() {
   const filtered = useMemo(() => {
     let result = [...prices];
 
+    // SEARCH
     if (search.trim()) {
+      const searchLower = search.toLowerCase();
       result = result.filter((p) =>
-        p.product.toLowerCase().includes(search.toLowerCase())
+        `${p.product} ${p.provider}`
+          .toLowerCase()
+          .includes(searchLower)
       );
     }
 
+    // FILTER
     if (providerFilter !== "all") {
       result = result.filter(
         (p) => normalize(p.provider) === providerFilter
       );
     }
 
+    // 🔥 PRICE SORT
+    result.sort((a, b) => {
+      return priceOrder === "asc"
+        ? a.price_per_hour_usd - b.price_per_hour_usd
+        : b.price_per_hour_usd - a.price_per_hour_usd;
+    });
+
     return result;
-  }, [prices, search, providerFilter]);
+  }, [prices, search, providerFilter, priceOrder]);
 
   const toggleCompare = (gpu: GPUData) => {
     const exists = compareList.some(
@@ -130,10 +145,11 @@ export default function GPUPriceMonitor() {
           <div className="flex flex-col sm:flex-row gap-3">
             <input
               type="text"
-              placeholder="Search GPU..."
+              placeholder="Search GPU or Provider..."
               className="bg-slate-900 border border-slate-800 rounded-lg px-4 py-2"
               onChange={(e) => setSearch(e.target.value)}
             />
+
             <select
               className="bg-slate-900 border border-slate-800 rounded-lg px-4 py-2"
               value={providerFilter}
@@ -145,84 +161,54 @@ export default function GPUPriceMonitor() {
                 </option>
               ))}
             </select>
+
+            {/* 🔥 SORT BUTTON */}
+            <button
+              onClick={() =>
+                setPriceOrder(priceOrder === "asc" ? "desc" : "asc")
+              }
+              className="bg-slate-900 border border-slate-800 rounded-lg px-4 py-2"
+            >
+              Sort Price {priceOrder === "asc" ? "⬆" : "⬇"}
+            </button>
           </div>
         </div>
-
-        {/* CHART */}
-        <div className="bg-slate-900 p-6 rounded-2xl border border-slate-800 min-h-[400px]">
-          {filtered.length > 0 ? (
-            <PriceVsVRAMChart data={filtered} />
-          ) : (
-            <div className="text-center text-slate-500">
-              No chart data available.
-            </div>
-          )}
-        </div>
-        {/* ADVANCED CHARTS */}
-
 
         {/* 🧮 CALCULATOR PANEL */}
         {compareList.length > 0 && (
           <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-6">
-            <h2 className="text-xl font-bold">
-              Cost Calculator
-            </h2>
-
-            <div className="flex flex-col md:flex-row gap-4">
-              <div>
-                <label className="text-sm text-slate-400">
-                  Hours per Day
-                </label>
-                <input
-                  type="number"
-                  value={hoursPerDay}
-                  onChange={(e) =>
-                    setHoursPerDay(Number(e.target.value))
-                  }
-                  className="mt-1 bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 w-32"
-                />
-              </div>
-
-              <div>
-                <label className="text-sm text-slate-400">
-                  Days per Month
-                </label>
-                <input
-                  type="number"
-                  value={daysPerMonth}
-                  onChange={(e) =>
-                    setDaysPerMonth(Number(e.target.value))
-                  }
-                  className="mt-1 bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 w-32"
-                />
-              </div>
-            </div>
+            <h2 className="text-xl font-bold">Cost Calculator</h2>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {compareList.map((gpu) => {
-                const hourly = gpu.price_per_hour_usd;
-                const daily = hourly * hoursPerDay;
-                const monthly = daily * daysPerMonth;
+                const monthly =
+                  gpu.price_per_hour_usd *
+                  hoursPerDay *
+                  daysPerMonth;
 
                 return (
                   <div
                     key={`${gpu.provider}-${gpu.product}`}
-                    className="bg-slate-800 rounded-xl p-5 space-y-3"
+                    className="bg-slate-800 rounded-xl p-5"
                   >
-                    <h3 className="font-semibold text-lg">
+                    <h3 className="font-semibold">
                       {gpu.provider} - {gpu.product}
                     </h3>
-
-                    <p>Hourly: ${hourly.toFixed(2)}</p>
-                    <p>Daily: ${daily.toFixed(2)}</p>
-                    <p className="text-emerald-400 font-bold text-lg">
-                      Monthly: ${monthly.toFixed(2)}
+                    <p className="text-emerald-400 font-bold">
+                      ${monthly.toFixed(2)} / month
                     </p>
                   </div>
                 );
               })}
             </div>
           </div>
+        )}
+
+        {/* 🔥 COMPARE COUNT */}
+        {compareList.length > 0 && (
+          <p className="text-sm text-emerald-400">
+            Comparing {compareList.length}/3 GPUs
+          </p>
         )}
 
         {/* TABLE */}
@@ -255,6 +241,7 @@ export default function GPUPriceMonitor() {
                 return (
                   <tr key={i} className="hover:bg-slate-800/40">
                     <td className="px-6 py-4">{item.product}</td>
+
                     <td className="px-6 py-4 flex items-center gap-2">
                       {logo && (
                         <Image
@@ -266,18 +253,18 @@ export default function GPUPriceMonitor() {
                       )}
                       {item.provider}
                     </td>
+
                     <td className="px-6 py-4 text-center">{item.gpu_count}</td>
                     <td className="px-6 py-4 text-center">{item.vram_gb} GB</td>
                     <td className="px-6 py-4 text-center">{item.vcpus}</td>
-                    <td className="px-6 py-4 text-center">
-                      {item.system_ram_gb} GB
-                    </td>
-                    <td className="px-6 py-4 text-center">
-                      {item.local_storage_tb ?? "—"}
-                    </td>
+                    <td className="px-6 py-4 text-center">{item.system_ram_gb} GB</td>
+                    <td className="px-6 py-4 text-center">{item.local_storage_tb ?? "—"}</td>
+
                     <td className="px-6 py-4 text-right text-emerald-400 font-bold">
                       {item.raw_price}
                     </td>
+
+                    {/* ✅ COMPARE FIX */}
                     <td className="px-6 py-4 text-center">
                       <input
                         type="checkbox"
@@ -304,8 +291,18 @@ export default function GPUPriceMonitor() {
           </table>
         </div>
 
+        {/* CHART */}
+        <div className="bg-slate-900 p-6 rounded-2xl border border-slate-800 min-h-[400px]">
+          {filtered.length > 0 ? (
+            <PriceVsVRAMChart data={filtered} />
+          ) : (
+            <div className="text-center text-slate-500">
+              No chart data available.
+            </div>
+          )}
+        </div>
+
       </div>
     </main>
-    
   );
 }
