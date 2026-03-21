@@ -134,3 +134,6 @@ Monthly Cost = Daily Cost × Days per Month
 - Price trend tracking
 - Deployment to Vercel
 - Authentication system
+## 🔥 Latest Update
+- Improved UI and added comparison feature
+added sort button and arranged the table above charts
