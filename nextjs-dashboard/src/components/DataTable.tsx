@@ -198,12 +198,12 @@ export default function DataTable({
       <div className="overflow-x-auto">
         <table className="w-full border-collapse">
           <thead>
-            <tr className="border-b border-zinc-200 dark:border-zinc-800">
+            <tr className="border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50/80 dark:bg-zinc-900/60">
               {COLS.map((col) => (
                 <th
                   key={col.key}
                   onClick={() => onSort(col.key)}
-                  className={`cursor-pointer select-none px-4 py-3 text-xs font-bold uppercase tracking-wider transition-colors ${
+                  className={`cursor-pointer select-none border-r border-zinc-200 dark:border-zinc-800 px-4 py-3 text-xs font-bold uppercase tracking-wider transition-colors last:border-r-0 ${
                     col.right ? "text-right" : "text-left"
                   } ${
                     sortKey === col.key
@@ -237,13 +237,13 @@ export default function DataTable({
                   )}
                 </th>
               ))}
-              <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+              <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 border-l border-zinc-200 dark:border-zinc-800">
                 Source
               </th>
             </tr>
           </thead>
 
-          <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800/40">
+          <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800">
             {rows.map((row, i) => {
               const selected = isRowSelected(row);
               return (
@@ -257,7 +257,7 @@ export default function DataTable({
                   }`}
                 >
                   {/* Cloud / Provider */}
-                  <td className={`px-4 py-3 align-middle ${selected ? "border-l-2 border-indigo-500" : "border-l-2 border-transparent"}`}>
+                  <td className={`px-4 py-3 align-middle border-r border-zinc-200 dark:border-zinc-800 ${selected ? "border-l-2 border-l-indigo-500" : "border-l-2 border-l-transparent"}`}>
                     <div className="flex items-center gap-2.5">
                       <ProviderLogo name={row.provider || "?"} size={28} />
                       <span className="text-sm font-medium text-zinc-800 dark:text-zinc-200">
@@ -267,14 +267,14 @@ export default function DataTable({
                   </td>
 
                   {/* GPU Type */}
-                  <td className="max-w-[220px] px-4 py-3 align-middle">
+                  <td className="max-w-[220px] px-4 py-3 align-middle border-r border-zinc-200 dark:border-zinc-800">
                     <span className="text-sm text-zinc-700 dark:text-zinc-300">
                       {row.gpu || "—"}
                     </span>
                   </td>
 
                   {/* Price */}
-                  <td className="px-4 py-3 text-right align-middle">
+                  <td className="px-4 py-3 text-right align-middle border-r border-zinc-200 dark:border-zinc-800">
                     <span className={`font-mono text-sm ${
                       row.price_num !== null && row.price_num === minPrice
                         ? "font-semibold text-emerald-600 dark:text-emerald-400"
@@ -291,19 +291,19 @@ export default function DataTable({
 
                   {/* GPUs + VRAM */}
                   {(["gpu_count", "vram"] as const).map((k) => (
-                    <td key={k} className="px-4 py-3 text-right align-middle font-mono text-sm text-zinc-500 dark:text-zinc-400">
+                    <td key={k} className="px-4 py-3 text-right align-middle font-mono text-sm text-zinc-500 dark:text-zinc-400 border-r border-zinc-200 dark:border-zinc-800">
                       {row[k] !== null ? row[k] : <span className="text-zinc-300 dark:text-zinc-700">—</span>}
                     </td>
                   ))}
 
                   {/* Region */}
-                  <td className="px-4 py-3 align-middle text-sm text-zinc-600 dark:text-zinc-400">
+                  <td className="px-4 py-3 align-middle text-sm text-zinc-600 dark:text-zinc-400 border-r border-zinc-200 dark:border-zinc-800">
                     {row.region ?? <span className="text-zinc-300 dark:text-zinc-700">—</span>}
                   </td>
 
                   {/* vCPU + RAM */}
                   {(["vcpu", "ram"] as const).map((k) => (
-                    <td key={k} className="px-4 py-3 text-right align-middle font-mono text-sm text-zinc-500 dark:text-zinc-400">
+                    <td key={k} className="px-4 py-3 text-right align-middle font-mono text-sm text-zinc-500 dark:text-zinc-400 border-r border-zinc-200 dark:border-zinc-800">
                       {row[k] !== null ? row[k] : <span className="text-zinc-300 dark:text-zinc-700">—</span>}
                     </td>
                   ))}

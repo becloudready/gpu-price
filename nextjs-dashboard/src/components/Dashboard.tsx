@@ -201,10 +201,10 @@ export default function Dashboard() {
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         {/* Page title */}
         <div className="mb-7">
-          <h1 className="text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
+          <h1 className="relative z-0 text-center font-sans text-[24px] md:text-5xl font-semibold leading-[108%] tracking-[-0.24px] md:tracking-[-0.025rem] text-zinc-900 dark:text-zinc-50">
             GPU Cloud Pricing
           </h1>
-          <p className="mt-1.5 text-sm text-zinc-500">
+          <p className="mt-2 text-center text-sm text-zinc-500">
             Compare pricing across neo cloud providers · Data refreshes nightly
           </p>
         </div>
