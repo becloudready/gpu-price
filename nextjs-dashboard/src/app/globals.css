@@ -1,0 +1,71 @@
+@import "tailwindcss";
+
+/* Class-based dark mode: .dark on <html> activates dark: variants */
+@variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+/* Chart CSS variables — swapped by theme */
+:root {
+  --chart-grid:  #e4e4e7;
+  --chart-axis:  #a1a1aa;
+}
+html.dark {
+  --chart-grid:  #27272a;
+  --chart-axis:  #52525b;
+}
+
+/* Shimmer skeleton animation */
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: #ffffff;
+  color: #18181b;
+  min-height: 100vh;
+}
+
+html.dark body {
+  background-color: #09090b;
+  color: #fafafa;
+}
+
+.shimmer {
+  background: linear-gradient(90deg, #f4f4f5 25%, #e4e4e7 50%, #f4f4f5 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.6s infinite linear;
+}
+
+html.dark .shimmer {
+  background: linear-gradient(90deg, #18181b 25%, #27272a 50%, #18181b 75%);
+  background-size: 200% 100%;
+}
+
+/* Bottom drawer */
+@keyframes slide-up {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+.drawer-enter { animation: slide-up 0.28s cubic-bezier(0.32, 0.72, 0, 1); }
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.backdrop-enter { animation: fade-in 0.2s ease-out; }
+
+/* Thin scrollbar */
+::-webkit-scrollbar         { width: 4px; height: 4px; }
+::-webkit-scrollbar-track   { background: transparent; }
+::-webkit-scrollbar-thumb   { background: #3f3f46; border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: #52525b; }
