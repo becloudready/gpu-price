@@ -188,6 +188,33 @@ def parse_coreweave_gpu_pricing(html: str) -> List[Dict[str, Any]]:
 # Outputs
 # ----------------------------
 def write_csv(path: str, rows: List[Dict[str, Any]]) -> None:
+    import os
+
+    # 🔥 ensure directory exists
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+
+    if not rows:
+        fieldnames = [
+            "provider",
+            "product",
+            "gpu_count",
+            "vram_gb",
+            "vcpus",
+            "system_ram_gb",
+            "local_storage_tb",
+            "price_per_hour_usd",
+            "raw_price",
+        ]
+        with open(path, "w", newline="", encoding="utf-8") as f:
+            csv.DictWriter(f, fieldnames=fieldnames).writeheader()
+        return
+
+    fieldnames = list(rows[0].keys())
+    with open(path, "w", newline="", encoding="utf-8") as f:
+        w = csv.DictWriter(f, fieldnames=fieldnames)
+        w.writeheader()
+        for r in rows:
+            w.writerow(r)
     if not rows:
         # still emit a header-only file for consistency
         fieldnames = [
@@ -214,9 +241,13 @@ def write_csv(path: str, rows: List[Dict[str, Any]]) -> None:
 
 
 def write_json(path: str, rows: List[Dict[str, Any]]) -> None:
+    import os
+
+    # 🔥 ensure directory exists
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+
     with open(path, "w", encoding="utf-8") as f:
         json.dump(rows, f, indent=2, ensure_ascii=False)
-
 
 # ----------------------------
 # CLI entrypoint (Lambda-style)
