@@ -3,13 +3,16 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { DATA_URL, META_URL, ITEMS_PER_PAGE } from "@/lib/constants";
 import { normalizeRow, unique } from "@/lib/utils";
+import CostCalculator from "./CostCalculator";
 import type { GPURaw, GPURow, Meta } from "@/types/gpu";
 import Header from "./Header";
 import DataTable from "./DataTable";
 import TableSkeleton from "./TableSkeleton";
 import PriceHistoryPanel from "./PriceHistoryPanel";
+import GPUCompare from "./GPUCompare";
+import { LayoutDashboard, Settings2, TrendingDown, Zap } from "lucide-react";
 
-// ─── Debounce ──────────────────────────────────────────────────────────────────
+// --- Debounce Hook ---
 function useDebounce<T>(value: T, delay: number): T {
   const [debounced, setDebounced] = useState(value);
   useEffect(() => {
@@ -19,17 +22,13 @@ function useDebounce<T>(value: T, delay: number): T {
   return debounced;
 }
 
-// ─── Dashboard ─────────────────────────────────────────────────────────────────
 export default function Dashboard() {
   const [data, setData] = useState<GPURow[]>([]);
   const [meta, setMeta] = useState<Meta | null>(null);
   const [status, setStatus] = useState<"loading" | "error" | "done">("loading");
   const [error, setError] = useState<string | null>(null);
-
-  // Row selection for price history (max 4)
+  const [showTools, setShowTools] = useState(true);
   const [selectedRows, setSelectedRows] = useState<GPURow[]>([]);
-
-  // Filter / sort
   const [search, setSearch] = useState("");
   const [provider, setProvider] = useState("all");
   const [gpuType, setGpuType] = useState("all");
@@ -40,45 +39,16 @@ export default function Dashboard() {
 
   const debouncedSearch = useDebounce(search, 200);
 
-  // ── Fetch ────────────────────────────────────────────────────────────────────
   const loadData = useCallback(async () => {
     setStatus("loading");
     setError(null);
     try {
-      const [dataRes, metaRes] = await Promise.allSettled([
-        fetch(DATA_URL),
-        fetch(META_URL),
-      ]);
-
-      if (dataRes.status !== "fulfilled" || !dataRes.value.ok) {
-        throw new Error(
-          `Failed to fetch pricing data (${
-            dataRes.status === "fulfilled"
-              ? `HTTP ${dataRes.value.status}`
-              : "network error"
-          })`
-        );
-      }
-
+      const [dataRes, metaRes] = await Promise.allSettled([fetch(DATA_URL), fetch(META_URL)]);
+      if (dataRes.status !== "fulfilled" || !dataRes.value.ok) throw new Error("Fetch failed");
       const raw = (await dataRes.value.json()) as GPURaw[];
-      if (!Array.isArray(raw)) throw new Error("Unexpected response format");
-
-      const rows = raw
-        .map(normalizeRow)
-        .filter(
-          (r) =>
-            (r.gpu || r.provider) &&
-            r.gpu_count !== null &&
-            r.vram !== null &&
-            r.vcpu !== null &&
-            r.ram !== null
-        );
+      const rows = raw.map(normalizeRow).filter(r => (r.gpu || r.provider) && r.gpu_count !== null);
       setData(rows);
-
-      if (metaRes.status === "fulfilled" && metaRes.value.ok) {
-        setMeta((await metaRes.value.json()) as Meta);
-      }
-
+      if (metaRes.status === "fulfilled" && metaRes.value.ok) setMeta((await metaRes.value.json()) as Meta);
       setStatus("done");
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to load data");
@@ -86,27 +56,11 @@ export default function Dashboard() {
     }
   }, []);
 
-  useEffect(() => {
-    loadData();
-  }, [loadData]);
+  useEffect(() => { loadData(); }, [loadData]);
 
-  // ── Derived state ─────────────────────────────────────────────────────────────
-  const providers = useMemo(
-    () => unique(data.map((r) => r.provider).filter(Boolean)).sort(),
-    [data]
-  );
-
-  const gpuTypes = useMemo(
-    () => unique(data.map((r) => r.gpu).filter(Boolean)).sort(),
-    [data]
-  );
-
-  const gpuCounts = useMemo(
-    () =>
-      unique(data.map((r) => (r.gpu_count !== null ? String(r.gpu_count) : "")).filter(Boolean))
-        .sort((a, b) => Number(a) - Number(b)),
-    [data]
-  );
+  const providers = useMemo(() => unique(data.map((r) => r.provider).filter(Boolean)).sort(), [data]);
+  const gpuTypes = useMemo(() => unique(data.map((r) => r.gpu).filter(Boolean)).sort(), [data]);
+  const gpuCounts = useMemo(() => unique(data.map((r) => String(r.gpu_count)).filter(Boolean)).sort((a, b) => Number(a) - Number(b)), [data]);
 
   const filtered = useMemo(() => {
     const q = debouncedSearch.toLowerCase().trim();
@@ -115,124 +69,117 @@ export default function Dashboard() {
         if (provider !== "all" && r.provider !== provider) return false;
         if (gpuType !== "all" && r.gpu !== gpuType) return false;
         if (numGpus !== "all" && String(r.gpu_count) !== numGpus) return false;
-        if (q) {
-          const hay = `${r.provider} ${r.gpu}`.toLowerCase();
-          if (!hay.includes(q)) return false;
-        }
+        if (q) return `${r.provider} ${r.gpu}`.toLowerCase().includes(q);
         return true;
       })
       .sort((a, b) => {
         const va = a[sortKey];
         const vb = b[sortKey];
-        if (va === null && vb === null) return 0;
-        if (va === null) return 1;
-        if (vb === null) return -1;
-        let c = 0;
-        if (typeof va === "number" && typeof vb === "number") {
-          c = va - vb;
-        } else {
-          c = String(va).localeCompare(String(vb));
-        }
+        if (va === null || vb === null) return 0;
+        const c = typeof va === "number" && typeof vb === "number" ? va - vb : String(va).localeCompare(String(vb));
         return sortDir === "asc" ? c : -c;
       });
   }, [data, debouncedSearch, provider, gpuType, numGpus, sortKey, sortDir]);
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE));
-  const safePage = Math.min(page, totalPages);
-  const paginated = filtered.slice(
-    (safePage - 1) * ITEMS_PER_PAGE,
-    safePage * ITEMS_PER_PAGE
-  );
-
-  // ── Handlers ──────────────────────────────────────────────────────────────────
-  const handleSort = (key: keyof GPURow) => {
-    if (sortKey === key) setSortDir((d) => (d === "asc" ? "desc" : "asc"));
-    else {
-      setSortKey(key);
-      setSortDir("asc");
-    }
-    setPage(1);
-  };
-
-  const handleReset = () => {
-    setSearch("");
-    setProvider("all");
-    setGpuType("all");
-    setNumGpus("all");
-    setSortKey("price_num");
-    setSortDir("asc");
-    setPage(1);
-    setSelectedRows([]);
-  };
-
-  const handleSelectRow = (row: GPURow) => {
-    setSelectedRows((prev) => {
-      const exists = prev.some((r) => r.provider === row.provider && r.gpu === row.gpu);
-      if (exists) return prev.filter((r) => !(r.provider === row.provider && r.gpu === row.gpu));
-      if (prev.length >= 4) return prev;
-      return [...prev, row];
+  const insights = useMemo(() => {
+    const valid = filtered.filter((r) => r.price_num !== null);
+    if (valid.length === 0) return null;
+    const cheapest = valid.reduce((min, r) => (r.price_num as number) < (min.price_num as number) ? r : min);
+    const bestValue = valid.reduce((best, r) => {
+      const val = (r.vram as number) / (r.price_num as number);
+      const bestVal = (best.vram as number) / (best.price_num as number);
+      return val > bestVal ? r : best;
     });
-  };
+    return { cheapest, bestValue };
+  }, [filtered]);
 
-  const handleRemoveRow = (row: GPURow) => {
-    setSelectedRows((prev) => prev.filter((r) => !(r.provider === row.provider && r.gpu === row.gpu)));
-  };
+  const stats = useMemo(() => ({
+    minPrice: data.length ? Math.min(...data.filter(r => r.price_num).map(r => r.price_num as number)) : null,
+    updatedAt: meta?.generated_at_utc ?? meta?.generated_at ?? null,
+  }), [data, meta]);
 
-  // ── Stats ─────────────────────────────────────────────────────────────────────
-  const stats = useMemo(() => {
-    const prices = data
-      .filter((r) => r.price_num !== null)
-      .map((r) => r.price_num as number);
-    const minPrice = prices.length ? Math.min(...prices) : null;
-    return {
-      minPrice,
-      updatedAt: meta?.generated_at_utc ?? meta?.generated_at ?? null,
-    };
-  }, [data, meta]);
-
-  // ── Render ────────────────────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-white dark:bg-zinc-950">
-      <Header
-        updatedAt={stats.updatedAt}
-        rowCount={status === "done" ? data.length : 0}
-      />
+    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 transition-colors">
+      <Header updatedAt={stats.updatedAt} rowCount={data.length} />
 
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        {/* Page title */}
-        <div className="mb-7">
-          <h1 className="relative z-0 text-center font-sans text-[24px] md:text-5xl font-semibold leading-[108%] tracking-[-0.24px] md:tracking-[-0.025rem] text-zinc-900 dark:text-zinc-50">
-            GPU Cloud Pricing
+        
+        {/* --- Hero Section --- */}
+        <section className="text-center mb-10 space-y-3">
+          <h1 className="text-4xl md:text-6xl font-black tracking-tighter text-zinc-900 dark:text-zinc-50 italic uppercase leading-none">
+            CloudDealHunt <span className="text-indigo-600">Analytics</span>
           </h1>
-          <p className="mt-2 text-center text-sm text-zinc-500">
-            Compare pricing across neo cloud providers · Data refreshes nightly
+          <p className="text-zinc-500 max-w-2xl mx-auto font-medium text-sm">
+            Advanced GPU Pricing Engine. Compare rates across neo-cloud providers with real-time value indexing.
           </p>
-        </div>
+        </section>
 
-        {/* Table */}
-        <div className="mt-6">
-          {status === "loading" && <TableSkeleton />}
+        {status === "loading" && <TableSkeleton />}
 
-          {status === "error" && (
-            <div className="rounded-xl border border-red-300/60 dark:border-red-900/40 bg-red-50 dark:bg-red-950/20 p-10 text-center">
-              <p className="text-sm font-medium text-red-500 dark:text-red-400">{error}</p>
+        {status === "done" && (
+          <div className="flex flex-col">
+            
+            {/* --- Control Bar --- */}
+            <div className="flex justify-between items-center bg-white dark:bg-zinc-900 p-4 rounded-3xl border border-zinc-200 dark:border-zinc-800 shadow-sm mb-6">
+              <div className="flex items-center gap-2">
+                <LayoutDashboard className="text-indigo-500" size={20} />
+                <span className="text-xs font-black uppercase tracking-widest text-zinc-400">Dashboard View</span>
+              </div>
               <button
-                type="button"
-                onClick={loadData}
-                className="mt-4 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800 px-4 py-2 text-sm text-zinc-700 dark:text-zinc-300 transition-colors hover:bg-zinc-200 dark:hover:bg-zinc-700"
+                onClick={() => setShowTools(!showTools)}
+                className="flex items-center gap-2 px-5 py-2 rounded-2xl bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-[11px] font-black uppercase transition hover:opacity-90 active:scale-95"
               >
-                Try again
+                <Settings2 size={14} />
+                {showTools ? "Hide Tools" : "Show Insights"}
               </button>
             </div>
-          )}
 
-          {status === "done" && (
-            <>
+            {/* --- Tools & Insights Wrapper --- */}
+            {showTools ? (
+              <div className="flex flex-col space-y-10 mb-10 animate-in fade-in slide-in-from-top-2 duration-500">
+                {/* Advanced Tools */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                  <div className="lg:col-span-4">
+                    <CostCalculator data={filtered} />
+                  </div>
+                  <div className="lg:col-span-8">
+                    <GPUCompare data={filtered} />
+                  </div>
+                </div>
+
+                {/* Insight Cards */}
+                {insights && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <InsightCard 
+                      title="Cheapest Node" 
+                      icon={<TrendingDown />} 
+                      row={insights.cheapest} 
+                      color="emerald" 
+                      metric={`$${insights.cheapest.price_num}/hr`}
+                    />
+                    <InsightCard 
+                      title="Best Value Node" 
+                      icon={<Zap />} 
+                      row={insights.bestValue} 
+                      color="indigo" 
+                      metric={`${((insights.bestValue.vram || 0) / (insights.bestValue.price_num || 1)).toFixed(2)} GB/$`}
+                    />
+                  </div>
+                )}
+              </div>
+            ) : null}
+
+            {/* --- Main Data Table (Moves up when tools are hidden) --- */}
+            <section className="space-y-4">
+              <div className="flex items-center gap-2 ml-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse" />
+                <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400">Market Inventory</h3>
+              </div>
               <DataTable
-                rows={paginated}
-                providers={providers}
-                gpuTypes={gpuTypes}
-                gpuCounts={gpuCounts}
+                rows={filtered.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE)}
+                providers={unique(data.map(r => r.provider)).sort()}
+                gpuTypes={unique(data.map(r => r.gpu)).sort()}
+                gpuCounts={unique(data.map(r => String(r.gpu_count))).sort((a,b) => Number(a)-Number(b))}
                 selectedProvider={provider}
                 selectedGpuType={gpuType}
                 selectedNumGpus={numGpus}
@@ -241,46 +188,46 @@ export default function Dashboard() {
                 onProvider={(p) => { setProvider(p); setPage(1); }}
                 onGpuType={(t) => { setGpuType(t); setPage(1); }}
                 onNumGpus={(n) => { setNumGpus(n); setPage(1); }}
-                onReset={handleReset}
+                onReset={() => { setProvider("all"); setGpuType("all"); setNumGpus("all"); setSearch(""); }}
                 sortKey={sortKey}
                 sortDir={sortDir}
-                onSort={handleSort}
-                page={safePage}
-                totalPages={totalPages}
+                onSort={(k) => { if(sortKey === k) setSortDir(sortDir === "asc" ? "desc" : "asc"); else setSortKey(k); }}
+                page={page}
+                totalPages={Math.ceil(filtered.length / ITEMS_PER_PAGE)}
                 onPageChange={setPage}
                 minPrice={stats.minPrice}
                 selectedRows={selectedRows}
-                onSelectRow={handleSelectRow}
+                onSelectRow={(row) => setSelectedRows(prev => prev.find(r => r.id === row.id) ? prev.filter(r => r.id !== row.id) : [...prev, row].slice(-4))}
               />
-
-              {selectedRows.length > 0 && (
-                <PriceHistoryPanel
-                  rows={selectedRows}
-                  onClose={() => setSelectedRows([])}
-                  onRemoveRow={handleRemoveRow}
-                />
-              )}
-            </>
-          )}
-        </div>
+            </section>
+          </div>
+        )}
       </main>
 
-      {/* Footer */}
-      <footer className="mx-auto max-w-7xl border-t border-zinc-200 dark:border-zinc-800/50 px-4 py-5 sm:px-6 lg:px-8">
-        <p className="text-xs text-zinc-500 dark:text-zinc-600">
-          Scraped nightly from public pricing pages ·{" "}
-          <a
-            href={DATA_URL}
-            target="_blank"
-            rel="noreferrer"
-            className="text-zinc-500 transition-colors hover:text-zinc-700 dark:hover:text-zinc-400"
-          >
-            View raw JSON
-          </a>{" "}
-          · Historical snapshots at{" "}
-          <code className="font-mono">freellm.org/history/YYYY-MM-DD/all.json</code>
-        </p>
-      </footer>
+      {selectedRows.length > 0 && (
+        <PriceHistoryPanel rows={selectedRows} onClose={() => setSelectedRows([])} onRemoveRow={(row) => setSelectedRows(selectedRows.filter((r) => !(r.provider === row.provider && r.gpu === row.gpu)))} />
+      )}
+    </div>
+  );
+}
+
+// --- Sub-component: Insight Card ---
+function InsightCard({ title, icon, row, color, metric }: { title: string, icon: React.ReactNode, row: GPURow, color: string, metric: string }) {
+  const colors: Record<string, string> = {
+    emerald: "border-emerald-200 dark:border-emerald-900/40 bg-emerald-50 dark:bg-emerald-900/10 text-emerald-600",
+    indigo: "border-indigo-200 dark:border-indigo-900/40 bg-indigo-50 dark:bg-indigo-900/10 text-indigo-600",
+  };
+
+  return (
+    <div className={`p-6 rounded-3xl border ${colors[color]} flex items-center justify-between shadow-sm`}>
+      <div className="space-y-1">
+        <p className="text-[10px] font-black uppercase tracking-widest opacity-70">{title}</p>
+        <h4 className="text-base font-bold text-zinc-900 dark:text-zinc-100">{row.gpu} <span className="text-zinc-400 font-medium">via</span> {row.provider}</h4>
+        <p className="text-xl font-black italic">{metric}</p>
+      </div>
+      <div className="p-3 bg-white dark:bg-zinc-900 rounded-2xl shadow-inner text-zinc-400">
+        {icon}
+      </div>
     </div>
   );
 }
