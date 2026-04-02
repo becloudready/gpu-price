@@ -24,4 +24,4 @@ sources.runpod.scrape(url="https://runpod.io/pricing", out_csv="data/runpod_gpu_
 sources.crusoe.scrape(url="https://www.crusoe.ai/cloud/pricing", out_csv="data/crusoe_gpu_prices.csv", out_json="data/crusoe_gpu_prices.json")
 sources.lambdalabs.scrape(url="https://lambda.ai/pricing", out_csv="data/lambda_gpu_prices.csv", out_json="data/lambda_gpu_prices.json")
 
-
+print("Running Coreweave...")
