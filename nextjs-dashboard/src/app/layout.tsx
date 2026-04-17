@@ -108,7 +108,26 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}>
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          {children}
+          <footer className="border-t border-white/10 mt-8">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-3">
+              <div className="flex items-center gap-4 text-xs text-white/30">
+                <a href="/privacy" className="hover:text-white/60 transition-colors">Privacy Policy</a>
+                <span>·</span>
+                <a href="/terms" className="hover:text-white/60 transition-colors">Terms of Service</a>
+              </div>
+              <a
+                href="https://becloudready.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-white/25 hover:text-white/60 text-xs transition-colors whitespace-nowrap"
+              >
+                Built with ❤️ by beCloudReady · Toronto
+              </a>
+            </div>
+          </footer>
+        </ThemeProvider>
       </body>
     </html>
   );

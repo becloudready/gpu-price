@@ -8,7 +8,7 @@
  */
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
-	"name": "nextjs-dashboard",
+	"name": "gpu-price",
 	"main": ".open-next/worker.js",
 	"compatibility_date": "2026-03-17",
 	"compatibility_flags": [
@@ -29,13 +29,19 @@
 			// Self-reference service binding, the service name must match the worker name
 			// see https://opennext.js.org/cloudflare/caching
 			"binding": "WORKER_SELF_REFERENCE",
-			"service": "nextjs-dashboard"
+			"service": "gpu-price"
+		}
+	],
+	"routes": [
+		{
+			"pattern": "gpuprice.freellm.org",
+			"custom_domain": true
 		}
 	],
 	"observability": {
 		"enabled": true
 	},
-	"upload_source_maps": true
+	"upload_source_maps": true,
 	/**
 	 * Smart Placement
 	 * https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement
@@ -53,5 +59,8 @@
 	 * Note: Use secrets to store sensitive data.
 	 * https://developers.cloudflare.com/workers/configuration/secrets/
 	 */
-	// "vars": {  "MY_VARIABLE": "production_value" }
+	"vars": {
+		"NEXT_PUBLIC_SITE_URL": "https://gpuprice.freellm.org",
+		"NEXT_PUBLIC_DATA_URL": "https://gpuprice.freellm.org/latest/all.json"
+	}
 }
