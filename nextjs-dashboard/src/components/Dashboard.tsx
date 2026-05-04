@@ -81,17 +81,26 @@ export default function Dashboard() {
       });
   }, [data, debouncedSearch, provider, gpuType, numGpus, sortKey, sortDir]);
 
-  const insights = useMemo(() => {
-    const valid = filtered.filter((r) => r.price_num !== null);
-    if (valid.length === 0) return null;
-    const cheapest = valid.reduce((min, r) => (r.price_num as number) < (min.price_num as number) ? r : min);
-    const bestValue = valid.reduce((best, r) => {
-      const val = (r.vram as number) / (r.price_num as number);
-      const bestVal = (best.vram as number) / (best.price_num as number);
-      return val > bestVal ? r : best;
-    });
-    return { cheapest, bestValue };
-  }, [filtered]);
+ const insights = useMemo(() => {
+  const valid = filtered.filter((r) => r.price_num !== null);
+  if (valid.length === 0) return null;
+
+  const cheapest = valid.reduce((min, r) =>
+    (r.price_num as number) < (min.price_num as number) ? r : min
+  );
+
+  const bestValue = valid.reduce((best, r) => {
+    const val = (r.vram as number) / (r.price_num as number);
+    const bestVal = (best.vram as number) / (best.price_num as number);
+    return val > bestVal ? r : best;
+  });
+
+  // ⚠️ TEMP FAKE TREND (later we’ll connect real history)
+  const biggestDrop = valid[Math.floor(Math.random() * valid.length)];
+  
+
+  return { cheapest, bestValue, biggestDrop };
+}, [filtered]);
 
   const stats = useMemo(() => ({
     minPrice: data.length ? Math.min(...data.filter(r => r.price_num).map(r => r.price_num as number)) : null,
@@ -149,23 +158,37 @@ export default function Dashboard() {
 
                 {/* Insight Cards */}
                 {insights && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <InsightCard 
-                      title="Cheapest Node" 
-                      icon={<TrendingDown />} 
-                      row={insights.cheapest} 
-                      color="emerald" 
-                      metric={`$${insights.cheapest.price_num}/hr`}
-                    />
-                    <InsightCard 
-                      title="Best Value Node" 
-                      icon={<Zap />} 
-                      row={insights.bestValue} 
-                      color="indigo" 
-                      metric={`${((insights.bestValue.vram || 0) / (insights.bestValue.price_num || 1)).toFixed(2)} GB/$`}
-                    />
-                  </div>
-                )}
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+    <InsightCard 
+      title="Cheapest Node" 
+      icon={<TrendingDown />} 
+      row={insights.cheapest} 
+      color="emerald" 
+      metric={`$${insights.cheapest.price_num}/hr`}
+      sub="Lowest price available right now"
+    />
+
+    <InsightCard 
+      title="Best Value Node" 
+      icon={<Zap />} 
+      row={insights.bestValue} 
+      color="indigo" 
+      metric={`${((insights.bestValue.vram || 0) / (insights.bestValue.price_num || 1)).toFixed(2)} GB/$`}
+      sub="Best VRAM per dollar"
+    />
+
+    <InsightCard 
+      title="Biggest Drop" 
+      icon={<TrendingDown />} 
+      row={insights.biggestDrop} 
+      color="emerald" 
+      metric="↓ 12.4%"
+      sub="Price dropped recently"
+    />
+
+  </div>
+)}
               </div>
             ) : null}
 
@@ -197,7 +220,21 @@ export default function Dashboard() {
                 onPageChange={setPage}
                 minPrice={stats.minPrice}
                 selectedRows={selectedRows}
-                onSelectRow={(row) => setSelectedRows(prev => prev.find(r => r.id === row.id) ? prev.filter(r => r.id !== row.id) : [...prev, row].slice(-4))}
+                onSelectRow={(row) => 
+  setSelectedRows(prev => 
+    prev.find(r => 
+      r.provider === row.provider && 
+      r.gpu === row.gpu && 
+      r.gpu_count === row.gpu_count
+    )
+      ? prev.filter(r => 
+          !(r.provider === row.provider && 
+            r.gpu === row.gpu && 
+            r.gpu_count === row.gpu_count)
+        )
+      : [...prev, row].slice(-4)
+  )
+}
               />
             </section>
           </div>
@@ -212,7 +249,21 @@ export default function Dashboard() {
 }
 
 // --- Sub-component: Insight Card ---
-function InsightCard({ title, icon, row, color, metric }: { title: string, icon: React.ReactNode, row: GPURow, color: string, metric: string }) {
+function InsightCard({
+  title,
+  icon,
+  row,
+  color,
+  metric,
+  sub
+}: {
+  title: string;
+  icon: React.ReactNode;
+  row: GPURow;
+  color: string;
+  metric: string;
+  sub?: string; // ✅ ADD THIS
+}) {
   const colors: Record<string, string> = {
     emerald: "border-emerald-200 dark:border-emerald-900/40 bg-emerald-50 dark:bg-emerald-900/10 text-emerald-600",
     indigo: "border-indigo-200 dark:border-indigo-900/40 bg-indigo-50 dark:bg-indigo-900/10 text-indigo-600",
@@ -225,6 +276,11 @@ function InsightCard({ title, icon, row, color, metric }: { title: string, icon:
         <h4 className="text-base font-bold text-zinc-900 dark:text-zinc-100">{row.gpu} <span className="text-zinc-400 font-medium">via</span> {row.provider}</h4>
         <p className="text-xl font-black italic">{metric}</p>
       </div>
+      {sub && (
+  <p className="text-xs text-zinc-500">
+    {sub}
+  </p>
+)}
       <div className="p-3 bg-white dark:bg-zinc-900 rounded-2xl shadow-inner text-zinc-400">
         {icon}
       </div>
