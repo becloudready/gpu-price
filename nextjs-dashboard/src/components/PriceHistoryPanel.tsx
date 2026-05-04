@@ -28,9 +28,12 @@ const PROVIDER_STYLES: Record<
 
 function ProviderBadge({ name }: { name: string }) {
   const s = PROVIDER_STYLES[name.toLowerCase()] ?? {
-    dot: "bg-zinc-400", text: "text-zinc-600 dark:text-zinc-400",
-    bg: "bg-zinc-100 dark:bg-zinc-800", ring: "ring-zinc-300 dark:ring-zinc-700",
+    dot: "bg-zinc-400",
+    text: "text-zinc-600 dark:text-zinc-400",
+    bg: "bg-zinc-100 dark:bg-zinc-800",
+    ring: "ring-zinc-300 dark:ring-zinc-700",
   };
+
   return (
     <span className={`inline-flex items-center gap-1.5 rounded-md px-2 py-1 font-mono text-xs font-medium ring-1 ring-inset ${s.bg} ${s.text} ${s.ring}`}>
       <span className={`h-1.5 w-1.5 rounded-full ${s.dot}`} />
@@ -39,7 +42,15 @@ function ProviderBadge({ name }: { name: string }) {
   );
 }
 
-// ─── Historical data fetching ─────────────────────────────────────────────────
+function getTrend(points: HistoryPoint[]) {
+  if (points.length < 2) return null;
+  const first = points[0].price;
+  const last = points[points.length - 1].price;
+  if (!first || !last) return null;
+  return ((last - first) / first) * 100;
+}
+
+// ─── Historical data ───────────────────────────────────────────────────────────
 
 function getLastNDays(n: number): string[] {
   const today = new Date();
@@ -60,13 +71,16 @@ function formatLabel(dateStr: string): string {
 
 async function fetchPriceHistory(row: GPURow): Promise<HistoryPoint[]> {
   const dates = getLastNDays(60);
+
   const results = await Promise.allSettled(
     dates.map(async (date) => {
       try {
         const res = await fetch(`${HISTORY_BASE_URL}/${date}/all.json`);
         if (!res.ok) return null;
+
         const data = (await res.json()) as GPURaw[];
         if (!Array.isArray(data)) return null;
+
         const match = data
           .map(normalizeRow)
           .find(
@@ -74,13 +88,20 @@ async function fetchPriceHistory(row: GPURow): Promise<HistoryPoint[]> {
               r.provider.toLowerCase() === row.provider.toLowerCase() &&
               r.gpu.toLowerCase() === row.gpu.toLowerCase()
           );
+
         if (!match || match.price_num === null) return null;
-        return { date, price: match.price_num, label: formatLabel(date) } as HistoryPoint;
+
+        return {
+          date,
+          price: match.price_num,
+          label: formatLabel(date),
+        } as HistoryPoint;
       } catch {
         return null;
       }
     })
   );
+
   return results
     .filter((r): r is PromiseFulfilledResult<HistoryPoint | null> => r.status === "fulfilled")
     .map((r) => r.value)
@@ -89,6 +110,12 @@ async function fetchPriceHistory(row: GPURow): Promise<HistoryPoint[]> {
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
+function getMinMax(points: HistoryPoint[]) {
+  const prices = points.map(p => p.price).filter((p): p is number => p !== null);
+  if (!prices.length) return null;
+  return { min: Math.min(...prices), max: Math.max(...prices) };
+}
+
 function rowKey(row: GPURow) {
   return `${row.provider}::${row.gpu}`;
 }
@@ -96,54 +123,33 @@ function rowKey(row: GPURow) {
 function mergeSeriesData(
   allPoints: Map<string, HistoryPoint[]>,
   rows: GPURow[]
-): Record<string, string | number | null>[] {
-  const dateMap = new Map<string, Record<string, string | number | null>>();
+) {
+ const dateMap = new Map<
+  string,
+  Record<string, string | number | null>
+>();
+
   rows.forEach((row, i) => {
     const points = allPoints.get(rowKey(row)) ?? [];
-    points.forEach(({ date, price, label }) => {
-      if (!dateMap.has(date)) dateMap.set(date, { date, label });
-      dateMap.get(date)![`price_${i}`] = price;
-    });
+
+   points.forEach(({ date, price, label }) => {
+  if (!dateMap.has(date)) {
+    dateMap.set(date, { date, label });
+  }
+
+  const entry = dateMap.get(date);
+  if (entry) {
+    entry[`price_${i}`] = price;
+  }
+});
   });
+
   return Array.from(dateMap.values()).sort((a, b) =>
     String(a.date).localeCompare(String(b.date))
   );
 }
 
-const SPEC_ROWS: { label: string; getValue: (r: GPURow) => string | number | null; accent?: boolean }[] = [
-  { label: "Price / hr",   getValue: (r) => fmtPrice(r),   accent: true },
-  { label: "Region",       getValue: (r) => r.region },
-  { label: "GPU Count",    getValue: (r) => r.gpu_count },
-  { label: "VRAM (GB)",    getValue: (r) => r.vram },
-  { label: "vCPU",         getValue: (r) => r.vcpu },
-  { label: "RAM (GB)",     getValue: (r) => r.ram },
-  { label: "Storage (TB)", getValue: (r) => r.storage },
-];
-
-// ─── Chart skeleton ───────────────────────────────────────────────────────────
-
-function ChartSkeleton() {
-  return (
-    <div className="px-1 pb-2">
-      <div className="flex items-end gap-1" style={{ height: 180 }}>
-        {Array.from({ length: 32 }).map((_, i) => (
-          <div
-            key={i}
-            className="shimmer flex-1 rounded-sm"
-            style={{ height: `${30 + Math.abs(Math.sin(i * 0.65) * 60)}%` }}
-          />
-        ))}
-      </div>
-      <div className="mt-3 flex justify-between px-2">
-        {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="shimmer h-2.5 w-10 rounded" />
-        ))}
-      </div>
-    </div>
-  );
-}
-
-// ─── Panel ────────────────────────────────────────────────────────────────────
+// ─── Component ────────────────────────────────────────────────────────────────
 
 export default function PriceHistoryPanel({
   rows,
@@ -157,7 +163,6 @@ export default function PriceHistoryPanel({
   const [allPoints, setAllPoints] = useState<Map<string, HistoryPoint[]>>(new Map());
   const [loadingCount, setLoadingCount] = useState(rows.length);
 
-  // Close on Escape
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -166,15 +171,17 @@ export default function PriceHistoryPanel({
     return () => window.removeEventListener("keydown", handler);
   }, [onClose]);
 
-  // Fetch history — re-run whenever the set of selected rows changes
   const keysString = rows.map(rowKey).join("|");
+
   useEffect(() => {
     let cancelled = false;
+
     setAllPoints(new Map());
     setLoadingCount(rows.length);
 
     rows.forEach((row) => {
       const key = rowKey(row);
+
       fetchPriceHistory(row)
         .then((data) => {
           if (!cancelled) {
@@ -191,11 +198,34 @@ export default function PriceHistoryPanel({
     });
 
     return () => { cancelled = true; };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [keysString]);
 
   const loading = loadingCount > 0;
   const mergedData = useMemo(() => mergeSeriesData(allPoints, rows), [allPoints, rows]);
+  const biggestDrop = useMemo<{
+  row: GPURow;
+  drop: number;
+} | null>(() => {
+  let bestRow: GPURow | null = null;
+  let bestDrop = 0;
+
+  rows.forEach((row) => {
+    const history = allPoints.get(rowKey(row)) || [];
+    const trend = getTrend(history);
+
+    if (trend !== null && trend < bestDrop) {
+      bestDrop = trend;
+      bestRow = row;
+    }
+  });
+
+  if (!bestRow) return null;
+
+  return {
+    row: bestRow,
+    drop: bestDrop,
+  };
+}, [rows, allPoints]);
 
   const chartSeries: ChartSeries[] = rows.map((row, i) => ({
     key: rowKey(row),
@@ -208,157 +238,48 @@ export default function PriceHistoryPanel({
     (row) => (allPoints.get(rowKey(row))?.length ?? 0) >= 2
   );
 
-  const prices = rows.map((r) => r.price_num).filter((p): p is number => p !== null);
-  const minCompPrice = prices.length > 1 ? Math.min(...prices) : null;
-
   return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      aria-label="GPU price comparison"
-      className="drawer-enter fixed bottom-0 left-0 right-0 z-50 max-h-[80vh] overflow-y-auto rounded-t-2xl border-t border-zinc-300/60 dark:border-zinc-700/60 bg-white dark:bg-zinc-950 shadow-2xl"
-    >
-      {/* Drag handle */}
-      <div className="sticky top-0 z-10 flex items-center justify-center border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 py-3">
-        <div className="h-1 w-10 rounded-full bg-zinc-300 dark:bg-zinc-700" />
-      </div>
+    <div className="p-4">
+      {!loading && hasEnoughData && (
+        <PriceChart data={mergedData} series={chartSeries} />
+      )}
+      {biggestDrop?.row && (
+  <div className="mb-4 p-3 rounded-xl border border-rose-200 bg-rose-50 dark:bg-rose-900/20">
+    <p className="text-xs text-rose-600 font-semibold">📉 Biggest Drop</p>
+    
+    <p className="text-sm font-bold">
+      {biggestDrop.row.gpu} via {biggestDrop.row.provider}
+    </p>
 
-      <div className="mx-auto max-w-5xl px-4 pb-10 pt-5 sm:px-6">
+    <p className="text-rose-600 font-mono">
+      ↓ {Math.abs(biggestDrop.drop).toFixed(2)}%
+    </p>
+  </div>
+)}
+      {/* ✅ FIXED SECTION */}
+      <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-5">
+        {rows.map((row, i) => {
+          const history = allPoints.get(rowKey(row)) || [];
+          const mm = getMinMax(history);
 
-        {/* ── Header ──────────────────────────────────────────────────── */}
-        <div className="flex flex-wrap items-start justify-between gap-3">
-          <div className="flex flex-wrap gap-2">
-            {rows.map((row, i) => (
-              <div
-                key={rowKey(row)}
-                className="flex items-center gap-1.5 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/60 py-1 pl-2.5 pr-1.5"
-              >
-                <span
-                  className="h-2 w-2 shrink-0 rounded-full"
-                  style={{ backgroundColor: SERIES_COLORS[i] }}
-                />
-                <ProviderBadge name={row.provider} />
-                <span className="text-sm font-medium text-zinc-800 dark:text-zinc-200">{row.gpu}</span>
-                {rows.length > 1 && (
-                  <button
-                    type="button"
-                    onClick={() => onRemoveRow(row)}
-                    aria-label={`Remove ${row.gpu}`}
-                    className="ml-0.5 flex h-5 w-5 items-center justify-center rounded text-zinc-400 dark:text-zinc-600 transition-colors hover:bg-zinc-200 dark:hover:bg-zinc-700 hover:text-zinc-700 dark:hover:text-zinc-300"
-                  >
-                    <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
-                )}
+          if (!mm) return null;
+
+          const range = mm.max - mm.min;
+
+          return (
+            <div key={i} className="p-4 border rounded-xl">
+              <p>{row.provider}</p>
+              <h4>{row.gpu}</h4>
+
+              <div className="flex justify-between">
+                <span>Min: ${mm.min.toFixed(2)}</span>
+                <span>Max: ${mm.max.toFixed(2)}</span>
               </div>
-            ))}
-          </div>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Close"
-            className="flex h-7 w-7 items-center justify-center rounded-lg text-zinc-400 dark:text-zinc-500 transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-700 dark:hover:text-zinc-200"
-          >
-            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
 
-        {/* ── Spec comparison table ────────────────────────────────────── */}
-        <div className="mt-5 overflow-x-auto rounded-xl border border-zinc-200 dark:border-zinc-800">
-          <table className="w-full border-collapse">
-            <thead>
-              <tr className="border-b border-zinc-200 dark:border-zinc-800">
-                <th className="w-32 py-2.5 pl-4 pr-3 text-left text-[11px] font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-600" />
-                {rows.map((row, i) => (
-                  <th key={rowKey(row)} className="py-2.5 px-4 text-left">
-                    <div className="flex items-center gap-1.5">
-                      <span
-                        className="h-1.5 w-1.5 shrink-0 rounded-full"
-                        style={{ backgroundColor: SERIES_COLORS[i] }}
-                      />
-                      <span className="text-xs font-medium text-zinc-700 dark:text-zinc-300 truncate max-w-[160px]">
-                        {row.gpu}
-                      </span>
-                    </div>
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800/50">
-              {SPEC_ROWS.map(({ label, getValue, accent }) => (
-                <tr key={label}>
-                  <td className="py-2.5 pl-4 pr-3 text-[11px] font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-600">
-                    {label}
-                  </td>
-                  {rows.map((row) => {
-                    const val = getValue(row);
-                    const isMin =
-                      accent && minCompPrice !== null && row.price_num === minCompPrice;
-                    return (
-                      <td
-                        key={rowKey(row)}
-                        className={`py-2.5 px-4 font-mono text-sm font-semibold ${
-                          isMin
-                            ? "text-emerald-600 dark:text-emerald-400"
-                            : accent
-                            ? "text-zinc-900 dark:text-zinc-100"
-                            : "text-zinc-700 dark:text-zinc-300"
-                        }`}
-                      >
-                        {val !== null && val !== undefined && val !== "" ? String(val) : "—"}
-                      </td>
-                    );
-                  })}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        {/* ── Price history ────────────────────────────────────────────── */}
-        <div className="mt-7">
-          <div className="mb-4">
-            <h3 className="text-sm font-semibold text-zinc-800 dark:text-zinc-200">Price History</h3>
-            <p className="mt-0.5 text-xs text-zinc-500">
-              Last 60 days ·{" "}
-              {loading
-                ? "fetching…"
-                : `${mergedData.length} data point${mergedData.length !== 1 ? "s" : ""} found`}
-            </p>
-          </div>
-
-          <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/40 p-4">
-            {loading && <ChartSkeleton />}
-
-            {!loading && !hasEnoughData && (
-              <div className="py-12 text-center">
-                <p className="text-sm text-zinc-500">No historical data found.</p>
-                <p className="mt-1 text-xs text-zinc-400 dark:text-zinc-700">
-                  History is available after the scraper has run for multiple days.
-                </p>
-              </div>
-            )}
-
-            {!loading && hasEnoughData && (
-              <>
-                <PriceChart data={mergedData} series={chartSeries} />
-                {rows.length > 1 && (
-                  <div className="mt-3 flex flex-wrap gap-4">
-                    {chartSeries.map((s) => (
-                      <div key={s.key} className="flex items-center gap-1.5">
-                        <span className="h-2 w-2 rounded-full" style={{ backgroundColor: s.color }} />
-                        <span className="text-xs text-zinc-500">{s.label}</span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </>
-            )}
-          </div>
-        </div>
+              <div>Range: ${range.toFixed(2)}</div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
