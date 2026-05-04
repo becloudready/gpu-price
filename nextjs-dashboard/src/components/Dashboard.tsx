@@ -155,6 +155,7 @@ export default function Dashboard() {
                     <GPUCompare data={filtered} />
                   </div>
                 </div>
+                
 
                 {/* Insight Cards */}
                 {insights && (
@@ -281,6 +282,7 @@ function InsightCard({
     {sub}
   </p>
 )}
+
       <div className="p-3 bg-white dark:bg-zinc-900 rounded-2xl shadow-inner text-zinc-400">
         {icon}
       </div>
