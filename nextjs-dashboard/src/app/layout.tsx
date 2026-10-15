@@ -82,6 +82,9 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: siteUrl,
     siteName: "GPU Cloud Pricing",
+    images: [
+      { url: "/og-image.png", width: 1200, height: 630, alt: "GPU Price: cloud GPU prices, compared nightly" },
+    ],
     title: "GPU Cloud Pricing — Compare H100, A100 & L40S Across Neo Clouds",
     description:
       "Real-time GPU rental pricing across AWS, Azure, GCP, RunPod, Lambda Labs, Nebius, Crusoe and more. Find the best GPU prices for AI training, ML inference, and GPU workloads. Updated nightly.",
@@ -89,6 +92,7 @@ export const metadata: Metadata = {
 
   twitter: {
     card: "summary_large_image",
+    images: ["/og-image.png"],
     title: "GPU Cloud Pricing — Compare GPU Rentals Across Neo Clouds",
     description:
       "Real-time GPU pricing across AWS, RunPod, Lambda Labs and more. Find the cheapest H100, A100 for your AI and ML workloads.",
@@ -106,6 +110,7 @@ export default function RootLayout({
     <html lang="en" className="dark">
       <head>
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}>
         <ThemeProvider>

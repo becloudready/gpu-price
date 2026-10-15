@@ -16,24 +16,9 @@ export default function Header({
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
         {/* Brand */}
         <div className="flex items-center gap-2.5">
-          <div className="flex h-7 w-7 items-center justify-center rounded-md bg-indigo-500/10 ring-1 ring-inset ring-indigo-500/25">
-            <svg
-              className="h-3.5 w-3.5 text-indigo-500 dark:text-indigo-400"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2.5}
-              aria-hidden="true"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M13 10V3L4 14h7v7l9-11h-7z"
-              />
-            </svg>
-          </div>
+          <img src="/logo.svg" alt="" width={28} height={28} className="h-7 w-7" />
           <span className="text-sm font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">
-            GPU Cloud Prices
+            GPU <span className="text-indigo-500 dark:text-indigo-400">Price</span>
           </span>
         </div>
 
