@@ -2,7 +2,7 @@ import json
 
 from scraper import merge  # noqa: F401  (import check)
 from scraper.schema import Offer, canonical_model, collapse_regions, drop_fractional, in_bounds
-from scraper.sources import gpuhunt, linode, shadeform, vultr
+from scraper.sources import gpuhunt, linode, lium, shadeform, vultr
 
 CSV_HEAD = "instance_name,location,price,cpu,memory,gpu_count,gpu_name,gpu_memory,spot,disk_size,gpu_vendor,flags,cpu_arch,provider_data\n"
 
@@ -81,6 +81,21 @@ def test_linode_and_vultr():
     ]}
     v = vultr.parse(plans)
     assert len(v) == 1 and v[0].price_per_gpu_hour_usd == 1.5 and v[0].vram_gb == 48
+
+
+def test_lium_skips_spot_and_normalizes_names():
+    node = {"gpu_count": 8, "price_per_gpu_hour": 2.0, "price_per_node_hour": 16.0, "available_gpu_count": 8,
+            "gpu_memory_gb": 80, "cpu_count": 128, "ram_gb": 2015, "disk_gb": 7000, "tier": "secure",
+            "country_code": "US", "rent_url": "https://lium.io/browse-pods/x"}
+    rows = lium.parse({"nodes": [
+        {**node, "gpu_model": "H100 80GB HBM3"},
+        {**node, "gpu_model": "A100-SXM4-80GB"},
+        {**node, "gpu_model": "B300 SXM6 PC", "gpu_memory_gb": 268},
+        {**node, "gpu_model": "RTX A6000", "gpu_memory_gb": 48},
+        {**node, "gpu_model": "RTX 4090", "tier": "spot"},
+    ]})
+    assert [r.gpu_model for r in rows] == ["H100", "A100 80GB", "B300", "A6000"]
+    assert rows[0].instance_price_usd_per_hour == 16.0 and rows[0].region == "us" and rows[0].availability == "in_stock"
 
 
 def test_run_job_failure_keeps_previous(tmp_path, monkeypatch):

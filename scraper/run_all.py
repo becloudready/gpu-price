@@ -20,7 +20,7 @@ from functools import partial
 from pathlib import Path
 
 from scraper.schema import Offer, collapse_regions, in_bounds
-from scraper.sources import gpuhunt, linode, shadeform, vultr
+from scraper.sources import gpuhunt, linode, lium, shadeform, vultr
 
 # name -> (fetch(raw) callable, minimum rows expected; fewer is treated as a failure)
 JOBS = {
@@ -31,6 +31,7 @@ JOBS = {
     "shadeform": (shadeform.fetch, 20),
     "linode": (linode.fetch, 3),
     "vultr": (vultr.fetch, 3),
+    "lium": (lium.fetch, 5),
 }
 # Small catalogs
 MIN_ROWS_OVERRIDE = {"gpuhunt-cloudrift": 3}
