@@ -2,7 +2,7 @@ import json
 
 from scraper import merge  # noqa: F401  (import check)
 from scraper.schema import Offer, canonical_model, collapse_regions, drop_fractional, in_bounds
-from scraper.sources import gpuhunt, linode, shadeform, vultr
+from scraper.sources import gpuhunt, linode, runcrate, shadeform, vultr
 
 CSV_HEAD = "instance_name,location,price,cpu,memory,gpu_count,gpu_name,gpu_memory,spot,disk_size,gpu_vendor,flags,cpu_arch,provider_data\n"
 
@@ -81,6 +81,22 @@ def test_linode_and_vultr():
     ]}
     v = vultr.parse(plans)
     assert len(v) == 1 and v[0].price_per_gpu_hour_usd == 1.5 and v[0].vram_gb == 48
+
+
+def test_runcrate_per_gpu_price_skips_unavailable_and_unknown_types():
+    def g(t, vram, price, n):
+        return {"gpu_type": t, "name": t, "vram": vram, "min_price_hr": price, "available_options": n}
+    offers = runcrate.parse({"gpus": [
+        g("H200", "141GB", 5.13, 16),
+        g("A100_80G", "80GB", 1.73, 15),
+        g("A100", "40GB", 1.99, 8),
+        g("MI350X", "288GB", 5.72, 0),      # priced but no live offers
+        g("H200_nvl", "141GB", 4.67, 4),    # no canonical name
+        g("GAUDI2", "—", 1.56, 2),          # no canonical name
+    ]})
+    assert [(o.gpu_model, o.price_per_gpu_hour_usd, o.vram_gb) for o in offers] == [
+        ("H200", 5.13, 141.0), ("A100 80GB", 1.73, 80.0), ("A100 40GB", 1.99, 40.0)]
+    assert all(o.provider == "runcrate" and o.gpu_count == 1 and o.availability == "in_stock" for o in offers)
 
 
 def test_run_job_failure_keeps_previous(tmp_path, monkeypatch):
