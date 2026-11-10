@@ -26,6 +26,7 @@ Prices come from machine-readable sources, not HTML scraping. Each source is an 
 | Shadeform marketplace API | Crusoe, Denvr, Massed Compute, Paperspace, Hyperstack, Scaleway, Latitude and others |
 | Akamai/Linode API | Linode |
 | Vultr API | Vultr |
+| [CloudGPU public JSON](https://cloudgpu.app/gpu-prices.json) | CloudGPU |
 
 All prices are on-demand USD per GPU-hour (spot, reserved and fractional-GPU offers are excluded). Rows outside per-model sanity bounds are quarantined, not published.
 

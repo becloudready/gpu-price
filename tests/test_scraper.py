@@ -2,7 +2,7 @@ import json
 
 from scraper import merge  # noqa: F401  (import check)
 from scraper.schema import Offer, canonical_model, collapse_regions, drop_fractional, in_bounds
-from scraper.sources import gpuhunt, linode, shadeform, vultr
+from scraper.sources import cloudgpu, gpuhunt, linode, shadeform, vultr
 
 CSV_HEAD = "instance_name,location,price,cpu,memory,gpu_count,gpu_name,gpu_memory,spot,disk_size,gpu_vendor,flags,cpu_arch,provider_data\n"
 
@@ -93,3 +93,31 @@ def test_run_job_failure_keeps_previous(tmp_path, monkeypatch):
     assert run_all.main() == 1
     res = json.loads((tmp_path / "d" / "jobs" / "boom.json").read_text())
     assert res["stale"] and res["last_success"] == "T" and res["rows"] == [{"x": 1}] and "down" in res["error"]
+
+
+def test_cloudgpu_official_json():
+    payload = {
+        "deploy_page": "https://cloudgpu.app/deploy",
+        "gpus": [
+            {"id": "rtx-4090", "gpu": "RTX 4090", "vram_gb": 24, "gpu_count": 1,
+             "usd_per_hour": 0.39, "in_stock": True, "region": None},
+            {"id": "a100-80g", "gpu": "A100 80G", "vram_gb": 80, "gpu_count": 1,
+             "usd_per_hour": 1.59, "in_stock": False, "region": None},
+            {"id": "skip-no-price", "gpu": "RTX 5090", "vram_gb": 32, "gpu_count": 1,
+             "usd_per_hour": None, "in_stock": True},
+            {"id": "v100-32g", "gpu": "V100 32G", "vram_gb": 32, "gpu_count": 1,
+             "usd_per_hour": 0.35, "in_stock": True, "region": None},
+        ],
+    }
+    offers = cloudgpu.parse(payload)
+    assert len(offers) == 3
+    assert {o.instance_type for o in offers} == {"rtx-4090", "a100-80g", "v100-32g"}
+    by = {o.instance_type: o for o in offers}
+    assert by["rtx-4090"].gpu_model == "RTX 4090"
+    assert by["rtx-4090"].price_per_gpu_hour_usd == 0.39
+    assert by["rtx-4090"].availability == "in_stock"
+    assert by["rtx-4090"].source == "cloudgpu-json"
+    assert by["rtx-4090"].deploy_url == "https://cloudgpu.app/deploy"
+    assert by["a100-80g"].gpu_model == "A100 80GB"
+    assert by["a100-80g"].availability == "out_of_stock"
+    assert by["v100-32g"].gpu_model == "V100 32GB"
